@@ -14,7 +14,7 @@ jobs:
           target: aarch64-unknown-linux-gnu
           override: true
 
-      - name: Build
+      - name: Debug build
         uses: actions-rs/cargo@v1
         with:
           use-cross: true
@@ -27,3 +27,16 @@ jobs:
           use-cross: true
           command: test
           args: --target aarch64-unknown-linux-gnu
+
+      - name: Production build
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --target aarch64-unknown-linux-gnu --release
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: smart-server
+          path: target/aarch64-unknown-linux-gnu/release/pv191-smart-home-server
