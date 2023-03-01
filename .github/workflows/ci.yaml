@@ -2,7 +2,28 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  build_and_test:
+  frontend-build_test:
+    runs-on: ubuntu-latest
+    container:
+      image: node:19-slim
+    defaults:
+      run:
+        working-directory: web/
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Push built files
+        uses: actions/upload-artifact@v3
+        with:
+          name: web
+          path: web/build
+
+  backend-build_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
