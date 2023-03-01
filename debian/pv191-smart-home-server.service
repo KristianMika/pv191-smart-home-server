@@ -1,0 +1,16 @@
+[Unit]
+Description=A smart home server that measures info about the environment
+
+[Service]
+StandardOutput=journal
+StandardError=journal
+
+User=nobody
+Group=nogroup
+
+Type=simple
+WorkingDirectory=/var/www/pv191-smart-home-server/
+ExecStart= /usr/bin/pv191-smart-home-server
+
+[Install]
+WantedBy=multi-user.target

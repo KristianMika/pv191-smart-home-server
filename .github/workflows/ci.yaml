@@ -2,7 +2,7 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  frontend-build_test:
+  frontend-build-test:
     runs-on: ubuntu-latest
     container:
       image: node:19-slim
@@ -10,21 +10,30 @@ jobs:
       run:
         working-directory: web/
     steps:
+
       - uses: actions/checkout@v3
+
       - name: Install dependencies
         run: npm install
+
       - name: Run tests
         run: npm test
+
       - name: Build
         run: npm run build
+
       - name: Push built files
         uses: actions/upload-artifact@v3
         with:
           name: web
           path: web/build
+          if-no-files-found: error
 
-  backend-build_test:
+  backend-build-test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/
     steps:
       - uses: actions/checkout@v3
 
@@ -39,19 +48,59 @@ jobs:
         run: cargo install cross
 
       - name: Debug build
-        working-directory: backend/
         run: cross build --target aarch64-unknown-linux-gnu
 
       - name: Test
-        working-directory: backend/
         run: cross test --target aarch64-unknown-linux-gnu
 
       - name: Production build
-        working-directory: backend/
-        run: cross test --target aarch64-unknown-linux-gnu --release
+        run: cross build --target aarch64-unknown-linux-gnu --release
 
       - name: Upload binary
         uses: actions/upload-artifact@v3
         with:
           name: smart-server
           path: backend/target/aarch64-unknown-linux-gnu/release/pv191-smart-home-server
+          if-no-files-found: error
+
+  debian-build-publish:
+    defaults:
+      run:
+        working-directory: backend/
+    needs: [frontend-build-test, backend-build-test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: aarch64-unknown-linux-gnu
+          override: true
+
+      - name: Install cargo-deb
+        run: rustup update && cargo install cargo-deb
+
+      - name: Download backend binary
+        uses: actions/download-artifact@v3
+        with:
+          name: smart-server
+          path: backend/target/aarch64-unknown-linux-gnu/release/
+
+      - name: Download frontend files
+        uses: actions/download-artifact@v3
+        with:
+          name: web
+          path: web_files/
+
+      - name: Create a Debian package
+        run: cargo deb --no-build --target=aarch64-unknown-linux-gnu
+
+      - name: Upload the Debian Package
+        uses: actions/upload-artifact@v3
+        with:
+          name: smart-server-deb-package
+          path: backend/target/aarch64-unknown-linux-gnu/debian/pv191-smart-home-server_*.deb
+          if-no-files-found: error
+
