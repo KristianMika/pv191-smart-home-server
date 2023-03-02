@@ -9,7 +9,10 @@ description = "A smart home server that measures info about the environment"
 actix-web = "4"
 actix-files = "0.6"
 env_logger = "0.10"
+error-stack = "0.3"
 log = "0.4"
+rppal = { version = "0.13", features = ["hal"] }
+rppal-dht11 = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 
 
