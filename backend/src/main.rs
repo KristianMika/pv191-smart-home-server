@@ -1,13 +1,12 @@
 mod endpoints;
 mod http_response;
 mod sensors;
-use log::info;
-use std::io;
-
-use actix_web::{App, HttpServer};
-use endpoints::measurement;
 
 use crate::sensors::sampler::Sampler;
+use actix_web::{App, HttpServer};
+use endpoints::measurement;
+use log::info;
+use std::io;
 
 static LISTENING_ADDRESS: &str = "0.0.0.0:8080";
 static WEB_FILES_PATH: &str = "/var/www/pv191-smart-home-server/";
