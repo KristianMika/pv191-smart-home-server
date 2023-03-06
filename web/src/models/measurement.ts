@@ -10,7 +10,7 @@ export interface Measurement {
 export enum MeasurementUnit {
   Celsius = "°C",
   Percentage = "%",
-  VocIndex = "(VOC Index)",
+  VocIndex = "",
 }
 
 export enum MeasurementType {

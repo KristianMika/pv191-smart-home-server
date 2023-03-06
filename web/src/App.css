@@ -19,12 +19,17 @@
 }
 
 .measurement_element__image {
-  height: 20rem;
+  height: 15rem;
 }
 
-.measurement_element__label {
+.measurement_element__unit,
+.measurement_element__value {
   font-weight: 600;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+}
+.measurement_element__name {
+  font-weight: 600;
+  font-size: 1.6rem;
 }
 
 @media (max-width: 1001px) {

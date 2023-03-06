@@ -22,6 +22,10 @@ export const MeasurementElement: React.FC<IMeasurementElement> = (
         <span className="measurement_element__unit">
           {getMeasurementUnit(props.measurement.type)}
         </span>
+        <br />
+        <span className="measurement_element__name">
+          {props.measurement.type}
+        </span>
       </div>
     </div>
   );
