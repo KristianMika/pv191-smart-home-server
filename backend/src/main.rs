@@ -5,9 +5,7 @@ mod server_repo;
 mod state;
 
 use crate::{
-    models::NewMeasurementStore,
-    sensors::sampler::Sampler,
-    server_repo::{postgres_server_repo::PostgresServerRepo, ServerRepo},
+    sensors::sampler::Sampler, server_repo::postgres_server_repo::PostgresServerRepo,
     state::ServerState,
 };
 use actix_cors::Cors;

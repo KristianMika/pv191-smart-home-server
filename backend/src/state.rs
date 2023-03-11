@@ -6,12 +6,16 @@ use crate::{
 };
 use std::{error::Error, fmt, sync::Arc};
 
+/// Holds the whole server state
 pub struct ServerState {
+    /// database repository for storing and fetching measurements
     pub repo: Arc<PostgresServerRepo>,
+    /// struct for interacting with all the sensors
     pub sampler: Arc<Sampler>,
 }
 
 impl ServerState {
+    /// Samples all sensors and stores the values into the db
     pub fn sample_sensors(&self) -> error_stack::Result<(), ServerError> {
         let sample = self
             .sampler

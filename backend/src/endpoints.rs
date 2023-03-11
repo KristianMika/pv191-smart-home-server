@@ -1,5 +1,4 @@
 use actix_web::{get, HttpResponse, Responder};
-use chrono::Utc;
 
 use crate::models::{MeasurementData, MeasurementResponse};
 

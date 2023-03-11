@@ -1,4 +1,4 @@
-use crate::models::{MeasurementStore, NewMeasurementStore};
+use crate::models::NewMeasurementStore;
 
 use super::models::HumidityTemperatureMeasurement;
 use super::{SensorError, DHT11_PIN};
