@@ -15,17 +15,18 @@ use actix_web::{web::Data, App, HttpServer};
 use dotenvy::dotenv;
 use endpoints::measurement;
 use log::info;
+use std::time::Duration;
 use std::{env, io, sync::Arc};
+use tokio::{task, time}; // 1.3.0
 
 static LISTENING_ADDRESS: &str = "0.0.0.0:8080";
 static WEB_FILES_PATH: &str = "/var/www/pv191-smart-home-server/";
 static INDEX_FILE: &str = "index.html";
 const DATABASE_URL_ENV: &str = "DATABASE_URL";
+const PERIODIC_SENSOR_SAMPLING_INTERVAL_SECONDS: u64 = 30;
 
 #[actix_web::main]
 async fn main() -> io::Result<()> {
-    // let mut sampler = Sampler::new().unwrap();
-    // println!("{:?}", sampler.read_humidity_temperature().unwrap());
     env_logger::init();
     dotenv().ok();
 
@@ -39,6 +40,22 @@ async fn main() -> io::Result<()> {
         sampler: Arc::new(Sampler::new().unwrap()),
     };
     let server_state = Data::new(server_state);
+    let server_state_sampling = server_state.clone();
+    task::spawn(async move {
+        let mut interval = time::interval(Duration::from_secs(
+            PERIODIC_SENSOR_SAMPLING_INTERVAL_SECONDS,
+        ));
+
+        loop {
+            interval.tick().await;
+            match server_state_sampling.sample_sensors() {
+                Ok(_) => {}
+                Err(err) => {
+                    log::error!("{}", err)
+                }
+            };
+        }
+    });
 
     info!("Starting server on address {}.", LISTENING_ADDRESS);
     HttpServer::new(move || {

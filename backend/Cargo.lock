@@ -1207,6 +1207,7 @@ dependencies = [
  "rppal",
  "rppal-dht11",
  "serde",
+ "tokio",
 ]
 
 [[package]]

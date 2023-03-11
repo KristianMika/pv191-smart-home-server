@@ -1,3 +1,5 @@
+use crate::models::{MeasurementStore, NewMeasurementStore};
+
 use super::models::HumidityTemperatureMeasurement;
 use super::{SensorError, DHT11_PIN};
 use error_stack::{IntoReport, Report, Result, ResultExt};
@@ -45,5 +47,14 @@ impl Sampler {
             .attach_printable(format!("Couldn't get pin #{}", gpio_pin))?
             .into_io(Mode::Output);
         Ok(Dht11::new(pin))
+    }
+
+    pub fn perfom_measurement(&self) -> error_stack::Result<NewMeasurementStore, SensorError> {
+        Ok(NewMeasurementStore {
+            temperature: Some(23.5),
+            humidity: Some(40),
+            voc_index: Some(123),
+            measurement_time: None,
+        })
     }
 }
