@@ -1,7 +1,7 @@
 use actix_web::{get, HttpResponse, Responder};
 use chrono::Utc;
 
-use crate::http_response::{MeasurementData, MeasurementResponse};
+use crate::models::{MeasurementData, MeasurementResponse};
 
 /// Sends the currently measured values of all sensors
 #[get("/api/measurement")]
