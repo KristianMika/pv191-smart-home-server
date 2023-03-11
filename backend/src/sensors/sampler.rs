@@ -1,4 +1,4 @@
-use crate::models::NewMeasurementStore;
+use crate::server_repo::postgres_server_repo::models::NewMeasurementStore;
 
 use super::models::HumidityTemperatureMeasurement;
 use super::{SensorError, DHT11_PIN};

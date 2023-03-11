@@ -1,5 +1,8 @@
+use crate::server_repo::postgres_server_repo::models::MeasurementStore;
+
+use self::models::NewMeasurementStore;
+
 use super::{DbError, ServerRepo};
-use crate::models::{MeasurementStore, NewMeasurementStore};
 use diesel::ExpressionMethods;
 use diesel::{
     r2d2::{ConnectionManager, Pool, PoolError, PooledConnection},
@@ -8,6 +11,7 @@ use diesel::{
 use error_stack::{IntoReport, Report, ResultExt};
 use std::sync::Arc;
 
+pub(crate) mod models;
 pub(crate) mod schema;
 
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;

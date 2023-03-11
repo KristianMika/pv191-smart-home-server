@@ -1,5 +1,6 @@
-use crate::models::{MeasurementStore, NewMeasurementStore};
 use std::{error::Error, fmt};
+
+use self::postgres_server_repo::models::{MeasurementStore, NewMeasurementStore};
 
 pub(crate) mod postgres_server_repo;
 
