@@ -37,7 +37,7 @@ assets = [
         "755",
     ],
     [
-        "../web_files/*",
+        "../web_files/**/*",
         "/var/www/pv191-smart-home-server/",
         "644",
     ],
