@@ -1,13 +1,13 @@
-use crate::server_repo::postgres_server_repo::models::MeasurementStore;
-
 use self::models::NewMeasurementStore;
-
 use super::{DbError, ServerRepo};
+use crate::server_repo::postgres_server_repo::models::MeasurementStore;
 use diesel::ExpressionMethods;
 use diesel::{
     r2d2::{ConnectionManager, Pool, PoolError, PooledConnection},
     PgConnection, QueryDsl, RunQueryDsl,
 };
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
+
 use error_stack::{IntoReport, Report, ResultExt};
 use std::sync::Arc;
 
@@ -15,6 +15,7 @@ pub(crate) mod models;
 pub(crate) mod schema;
 
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;
+const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
 /// Implementation of `ServerRepo` for PostgreSQL DB
 pub struct PostgresServerRepo {
@@ -62,17 +63,20 @@ impl PostgresServerRepo {
                     .attach_printable_lazy(|| "Coudln't initalize pg pool")?,
             ),
         };
-        // repo.apply_migrations()?;
+        repo.apply_migrations()?;
         Ok(repo)
     }
 
-    // pub fn apply_migrations(&self) -> error_stack::Result<(), DbError> {
-    //     // let mut conn = self.get_connection()?;
-    //     // // TODO: return an error instead of panicking
-    //     // conn.run_pending_migrations(MIGRATIONS)
-    //     //     .expect("Couldn't apply migrations");
-    //     Ok(())
-    // }
+    pub fn apply_migrations(&self) -> error_stack::Result<(), DbError> {
+        let mut conn = self.get_connection()?;
+        // // TODO: return an error instead of panicking
+        if let Err(err) = conn.run_pending_migrations(MIGRATIONS) {
+            return Err(Report::new(DbError)
+                .attach_printable(format!("Couldn't apply migrations: {}", err)));
+        }
+
+        Ok(())
+    }
     fn init_pool(database_url: &str) -> error_stack::Result<PgPool, PoolError> {
         let manager = ConnectionManager::<PgConnection>::new(database_url);
         Pool::builder().build(manager).into_report()
