@@ -30,6 +30,7 @@ copyright = "2023, Kristian Mika <kristian.mika@protonmail.com>"
 license-file = ["../LICENSE.md", "0"]
 extended-description = "A smart home server that measures info about the environment"
 priority = "optional"
+depends = "libpq-dev"
 assets = [
     [
         "./target/aarch64-unknown-linux-gnu/release/pv191-smart-home-server",
