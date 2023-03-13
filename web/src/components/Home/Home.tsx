@@ -9,21 +9,17 @@ export const Home: React.FC = () => {
   const [multiMeasurement, setMultiMeasurement] = useState<Measurement[]>([]);
   const [measurementTime, setMeasurementTime] = useState<Date>();
   useEffect(() => {
-    axios
-      // TODO: change to /api/measurement when done with development
-      .get("http://localhost:8080/api/measurement")
-      .then((response) => {
-        const data: IMeasurementResponse =
-          response.data as IMeasurementResponse;
+    axios.get("/api/measurement").then((response) => {
+      const data: IMeasurementResponse = response.data as IMeasurementResponse;
 
-        const measurements: Measurement[] = [
-          { type: MeasurementType.Temperature, value: data.temperature },
-          { type: MeasurementType.Humidity, value: data.humidity },
-          { type: MeasurementType.Voc, value: data.voc_index },
-        ];
-        setMeasurementTime(new Date(data.measurement_time));
-        setMultiMeasurement(measurements);
-      });
+      const measurements: Measurement[] = [
+        { type: MeasurementType.Temperature, value: data.temperature },
+        { type: MeasurementType.Humidity, value: data.humidity },
+        { type: MeasurementType.Voc, value: data.voc_index },
+      ];
+      setMeasurementTime(new Date(data.measurement_time));
+      setMultiMeasurement(measurements);
+    });
   }, []);
   return (
     <div className="home main_page">
