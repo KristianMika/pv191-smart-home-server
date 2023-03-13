@@ -1,9 +1,11 @@
+mod display_printer;
 mod endpoints;
 mod models;
 mod sensors;
 mod server_repo;
 mod state;
 
+use crate::display_printer::DisplayPrinter;
 use crate::{
     sensors::sampler::Sampler, server_repo::postgres_server_repo::PostgresServerRepo,
     state::ServerState,
@@ -15,6 +17,7 @@ use endpoints::measurement;
 use log::info;
 use std::time::Duration;
 use std::{env, io, sync::Arc};
+use tokio::sync::Mutex;
 use tokio::{task, time}; // 1.3.0
 
 static LISTENING_ADDRESS: &str = "0.0.0.0:8080";
@@ -36,6 +39,7 @@ async fn main() -> io::Result<()> {
             .unwrap(),
         ),
         sampler: Arc::new(Sampler::new().unwrap()),
+        display_printer: Arc::new(Mutex::new(DisplayPrinter::new().unwrap())),
     };
     let server_state = Data::new(server_state);
     let server_state_sampling = server_state.clone();
@@ -46,7 +50,7 @@ async fn main() -> io::Result<()> {
 
         loop {
             interval.tick().await;
-            match server_state_sampling.sample_sensors() {
+            match server_state_sampling.sample_sensors().await {
                 Ok(_) => {}
                 Err(err) => {
                     log::error!("{}", err)

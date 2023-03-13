@@ -69,7 +69,6 @@ impl PostgresServerRepo {
 
     pub fn apply_migrations(&self) -> error_stack::Result<(), DbError> {
         let mut conn = self.get_connection()?;
-        // // TODO: return an error instead of panicking
         if let Err(err) = conn.run_pending_migrations(MIGRATIONS) {
             return Err(Report::new(DbError)
                 .attach_printable(format!("Couldn't apply migrations: {}", err)));
