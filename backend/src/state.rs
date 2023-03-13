@@ -3,7 +3,6 @@ use tokio::sync::Mutex;
 
 use crate::{
     display_printer::DisplayPrinter,
-    measurement,
     sensors::sampler::Sampler,
     server_repo::{postgres_server_repo::PostgresServerRepo, ServerRepo},
 };
@@ -14,7 +13,7 @@ pub struct ServerState {
     /// database repository for storing and fetching measurements
     pub repo: Arc<PostgresServerRepo>,
     /// struct for interacting with all the sensors
-    pub sampler: Arc<Sampler>,
+    pub sampler: Arc<Mutex<Sampler>>,
     pub display_printer: Arc<Mutex<DisplayPrinter>>,
 }
 
@@ -23,6 +22,8 @@ impl ServerState {
     pub async fn sample_sensors(&self) -> error_stack::Result<(), ServerError> {
         let sample = self
             .sampler
+            .lock()
+            .await
             .perfom_measurement()
             .change_context(ServerError)
             .attach_printable("Couldn't perform measurement")?;

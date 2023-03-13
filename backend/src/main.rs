@@ -38,7 +38,7 @@ async fn main() -> io::Result<()> {
             )
             .unwrap(),
         ),
-        sampler: Arc::new(Sampler::new().unwrap()),
+        sampler: Arc::new(Mutex::new(Sampler::new().unwrap())),
         display_printer: Arc::new(Mutex::new(DisplayPrinter::new().unwrap())),
     };
     let server_state = Data::new(server_state);

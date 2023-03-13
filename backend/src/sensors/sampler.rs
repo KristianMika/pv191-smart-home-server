@@ -3,6 +3,7 @@ use crate::server_repo::postgres_server_repo::models::NewMeasurementStore;
 use super::models::HumidityTemperatureMeasurement;
 use super::{SensorError, DHT11_PIN};
 use error_stack::{IntoReport, Report, Result, ResultExt};
+use log::error;
 use rppal::gpio::{Gpio, Mode};
 use rppal::hal::Delay;
 use rppal_dht11::Dht11;
@@ -25,7 +26,10 @@ impl Sampler {
     pub fn read_humidity_temperature(
         &mut self,
     ) -> Result<HumidityTemperatureMeasurement, SensorError> {
-        match self.dht11.perform_measurement(&mut Delay::new()) {
+        match self
+            .dht11
+            .perform_measurement_with_retries(&mut Delay::new(), 5)
+        {
             Ok(m) => Ok(m.into()),
             Err(err) => Err(Report::new(SensorError).attach_printable(format!(
                 "Couldn't perform humidity and temperature measurement: {:?}",
@@ -49,11 +53,24 @@ impl Sampler {
         Ok(Dht11::new(pin))
     }
 
-    pub fn perfom_measurement(&self) -> error_stack::Result<NewMeasurementStore, SensorError> {
+    pub fn perfom_measurement(&mut self) -> error_stack::Result<NewMeasurementStore, SensorError> {
+        let mut temperature = None;
+        let mut humidity = None;
+        let voc_index = None;
+
+        match self.read_humidity_temperature() {
+            Ok(sample) => {
+                temperature = Some(sample.temperature);
+                humidity = Some(sample.humidity)
+            }
+            Err(err) => {
+                error!("{:?}", err)
+            }
+        };
         Ok(NewMeasurementStore {
-            temperature: Some(23.5),
-            humidity: Some(40),
-            voc_index: Some(123),
+            temperature,
+            humidity: humidity.map(|val| val as i32),
+            voc_index,
             measurement_time: None,
         })
     }
