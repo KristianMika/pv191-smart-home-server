@@ -17,7 +17,7 @@ export const MeasurementElement: React.FC<IMeasurementElement> = (
       />
       <div className="measurement_element__label">
         <span className="measurement_element__value">
-          {props.measurement.value}
+          {props.measurement.value || "-"}
         </span>{" "}
         <span className="measurement_element__unit">
           {getMeasurementUnit(props.measurement.type)}

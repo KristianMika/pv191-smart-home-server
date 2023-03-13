@@ -3,7 +3,7 @@ import humidity from "../assets/humidity.svg";
 import lungs from "../assets/lungs.svg";
 
 export interface Measurement {
-  value: number;
+  value?: number;
   type: MeasurementType;
 }
 

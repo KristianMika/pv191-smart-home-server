@@ -3,23 +3,26 @@
 .App {
   width: 100vw;
   height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 .main_page {
   width: 80%;
-  height: 80%;
-  margin: auto;
+  height: 100%;
+  margin: 0 auto;
 }
 
 .home__current_measurement_table {
   display: flex;
   flex-direction: row;
+  gap: 5%;
   justify-content: space-evenly;
   text-align: center;
 }
 
 .measurement_element__image {
-  height: 15rem;
+  height: 10rem;
 }
 
 .measurement_element__unit,
@@ -32,9 +35,21 @@
   font-size: 1.6rem;
 }
 
+.current_measurement_table__measurement_element {
+  background-color: #add8e6;
+  border-radius: 1rem;
+  flex: 1;
+  padding: 1rem;
+}
+
 @media (max-width: 1001px) {
   .home__current_measurement_table {
     flex-direction: column;
     justify-content: space-evenly;
+  }
+
+  .current_measurement_table__measurement_element {
+    width: 80%;
+    margin: 1rem auto;
   }
 }
