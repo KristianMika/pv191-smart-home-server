@@ -1,7 +1,7 @@
 use chrono::{DateTime, Local};
 use serde::Serialize;
 
-use crate::server_repo::postgres_server_repo::models::NewMeasurementStore;
+use crate::server_repo::postgres_server_repo::models::{MeasurementStore, NewMeasurementStore};
 
 /// A struct used to respond to a single measurement request
 #[derive(Serialize)]
@@ -13,6 +13,17 @@ pub struct MeasurementResponse {
     /// VOC Index in range [0,500]
     pub voc_index: Option<u32>,
     pub measurement_time: DateTime<Local>,
+}
+
+impl From<MeasurementStore> for MeasurementResponse {
+    fn from(value: MeasurementStore) -> MeasurementResponse {
+        MeasurementResponse {
+            temperature: value.temperature,
+            humidity: value.humidity.map(|value| value as u32),
+            voc_index: value.voc_index.map(|value| value as u32),
+            measurement_time: value.measurement_time,
+        }
+    }
 }
 
 #[derive(Serialize)]

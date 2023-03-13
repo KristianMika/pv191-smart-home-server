@@ -2,7 +2,7 @@ use crate::server_repo::postgres_server_repo::schema::*;
 use chrono::{DateTime, Local};
 use diesel::{Insertable, Queryable};
 
-#[derive(Debug, Queryable, Clone)]
+#[derive(Debug, Queryable, Clone, Default)]
 #[diesel(table_name = measurement)]
 pub struct MeasurementStore {
     pub id: i32,

@@ -1,18 +1,18 @@
-use actix_web::{get, HttpResponse, Responder};
+use actix_web::{get, web, HttpResponse, Responder};
+use log::error;
 
-use crate::models::MeasurementResponse;
+use crate::{models::MeasurementResponse, server_repo::ServerRepo, state::ServerState};
 
 /// Sends the currently measured values of all sensors
 #[get("/api/measurement")]
-pub async fn measurement() -> impl Responder {
-    let temperature = Some(22.5);
-    let humidity = Some(55);
-    let voc_index = Some(120);
-    let response = MeasurementResponse {
-        temperature,
-        humidity,
-        voc_index,
-        measurement_time: chrono::offset::Local::now(),
+pub async fn measurement(state: web::Data<ServerState>) -> impl Responder {
+    let response: MeasurementResponse = match state.repo.get_last_measurement() {
+        Err(err) => {
+            error!("{:?}", err);
+            return HttpResponse::InternalServerError().finish();
+        }
+        Ok(measurement) => measurement.unwrap_or_default().into(),
     };
+
     HttpResponse::Ok().json(response)
 }
