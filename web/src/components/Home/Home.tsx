@@ -2,8 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Measurement, MeasurementType } from "../../models/measurement";
 import { IMeasurementResponse } from "../../models/measurementResponse";
+import { Refreshing } from "../common/Refreshing";
 import { CurrentMeasurementTable } from "./CurrentMeasurementTable";
 
+const REFRESH_INTERVAL_MS = 10 * 1000;
 export const Home: React.FC = () => {
   const username = "Andy"; //TODO: load from JWT
   const [multiMeasurement, setMultiMeasurement] = useState<Measurement[]>([]);
@@ -24,13 +26,14 @@ export const Home: React.FC = () => {
   return (
     <div className="home main_page">
       <h2>Hi, {username}!</h2>
-
-      <CurrentMeasurementTable measurements={multiMeasurement} />
-      <div className="home__current_measurement_time">
-        <p className="home__current_measurement_time__content">
-          Measurement time: {measurementTime?.toLocaleString() || "-"}
-        </p>
-      </div>
+      <Refreshing interval={REFRESH_INTERVAL_MS}>
+        <CurrentMeasurementTable measurements={multiMeasurement} />
+        <div className="home__current_measurement_time">
+          <p className="home__current_measurement_time__content">
+            Measurement time: {measurementTime?.toLocaleString() || "-"}
+          </p>
+        </div>
+      </Refreshing>
     </div>
   );
 };
