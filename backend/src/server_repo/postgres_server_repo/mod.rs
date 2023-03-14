@@ -7,7 +7,6 @@ use diesel::{
     PgConnection, QueryDsl, RunQueryDsl,
 };
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
-
 use error_stack::{IntoReport, Report, ResultExt};
 use std::sync::Arc;
 
@@ -51,6 +50,24 @@ impl ServerRepo for PostgresServerRepo {
             )));
         }
         Ok(())
+    }
+
+    fn get_measurements_from(
+        &self,
+        datetime_from: chrono::DateTime<chrono::Local>,
+    ) -> error_stack::Result<Vec<MeasurementStore>, DbError> {
+        use schema::measurement::dsl::*;
+
+        let measurements: Vec<MeasurementStore> = measurement
+            .filter(measurement_time.ge(datetime_from))
+            .load::<MeasurementStore>(&mut self.get_connection()?)
+            .into_report()
+            .change_context(DbError)
+            .attach_printable(format!(
+                "Couldn't fetch measurements from {}",
+                datetime_from
+            ))?;
+        Ok(measurements)
     }
 }
 

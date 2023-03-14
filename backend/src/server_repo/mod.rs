@@ -1,6 +1,6 @@
-use std::{error::Error, fmt};
-
 use self::postgres_server_repo::models::{MeasurementStore, NewMeasurementStore};
+use chrono::{DateTime, Local};
+use std::{error::Error, fmt};
 
 pub(crate) mod postgres_server_repo;
 
@@ -11,8 +11,15 @@ pub trait ServerRepo {
         &self,
         measurement: NewMeasurementStore,
     ) -> error_stack::Result<(), DbError>;
+
     /// Fatches the latest measurement
     fn get_last_measurement(&self) -> error_stack::Result<Option<MeasurementStore>, DbError>;
+
+    /// Fetches all measurements that were measured after `from`
+    fn get_measurements_from(
+        &self,
+        from: DateTime<Local>,
+    ) -> error_stack::Result<Vec<MeasurementStore>, DbError>;
 }
 
 #[derive(Debug)]
