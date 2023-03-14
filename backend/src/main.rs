@@ -6,6 +6,7 @@ mod server_repo;
 mod state;
 
 use crate::display_printer::DisplayPrinter;
+use crate::endpoints::past_measurements;
 use crate::{
     sensors::sampler::Sampler, server_repo::postgres_server_repo::PostgresServerRepo,
     state::ServerState,
@@ -66,6 +67,7 @@ async fn main() -> io::Result<()> {
             // TODO: for development only
             .wrap(Cors::default().allowed_origin("http://localhost:3000"))
             .service(measurement)
+            .service(past_measurements)
             .service(actix_files::Files::new("/", WEB_FILES_PATH).index_file(INDEX_FILE))
     })
     .bind(LISTENING_ADDRESS)?
