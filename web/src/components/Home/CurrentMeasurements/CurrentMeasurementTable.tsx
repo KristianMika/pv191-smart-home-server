@@ -1,4 +1,4 @@
-import { getMeasurementImage, Measurement } from "../../models/measurement";
+import { getMeasurementImage, Measurement } from "../../../models/measurement";
 import { MeasurementElement } from "./MeasurementElement";
 
 export interface ICurrentMeasurementTable {
@@ -8,7 +8,7 @@ export const CurrentMeasurementTable: React.FC<ICurrentMeasurementTable> = (
   props
 ) => {
   return (
-    <div className="home__current_measurement_table">
+    <div className="home__current_measurement_table home__dashboard_table">
       {props.measurements.map((measurement) => (
         <MeasurementElement
           key={measurement.type}

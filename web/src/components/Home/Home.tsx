@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { Measurement, MeasurementType } from "../../models/measurement";
 import { IMeasurementResponse } from "../../models/measurementResponse";
 import { Refreshing } from "../common/Refreshing";
-import { CurrentMeasurementTable } from "./CurrentMeasurementTable";
+import { CurrentMeasurementTable } from "./CurrentMeasurements/CurrentMeasurementTable";
+import { MeasurementTime } from "./CurrentMeasurements/MeasurementTime";
+import { MeasurementHistory } from "./HistoryMeasurements/MeasurementHistory";
 
 const REFRESH_INTERVAL_MS = 10 * 1000;
 export const Home: React.FC = () => {
@@ -24,15 +26,12 @@ export const Home: React.FC = () => {
     });
   }, []);
   return (
-    <div className="home main_page">
+    <div className="home_page main_page">
       <h2>Hi, {username}!</h2>
       <Refreshing interval={REFRESH_INTERVAL_MS}>
         <CurrentMeasurementTable measurements={multiMeasurement} />
-        <div className="home__current_measurement_time">
-          <p className="home__current_measurement_time__content">
-            Measurement time: {measurementTime?.toLocaleString() || "-"}
-          </p>
-        </div>
+        <MeasurementHistory />
+        <MeasurementTime measurementTime={measurementTime} />
       </Refreshing>
     </div>
   );

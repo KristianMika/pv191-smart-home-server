@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import App from "./App";
-import { MeasurementElement } from "./components/Home/MeasurementElement";
+import { MeasurementElement } from "./components/Home/CurrentMeasurements/MeasurementElement";
 import { getMeasurementImage, MeasurementType } from "./models/measurement";
 
 test("renders name of temperature measurement element", () => {

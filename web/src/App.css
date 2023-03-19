@@ -1,8 +1,19 @@
 @import "normalize.css";
 
+:root {
+  /* Colour definition */
+  --coral-blue: #add8e6;
+  --jagged-ice: #cce5ed;
+
+  /* Colour assignment */
+  --dashboard-tile-colour: var(--coral-blue);
+  --background-color: var(--jagged-ice);
+}
+
 .App {
   width: 100vw;
   height: 100vh;
+  background: var(--background-color);
   margin: 0;
   padding: 0;
 }
@@ -14,10 +25,6 @@
 }
 
 .home__current_measurement_table {
-  display: flex;
-  flex-direction: row;
-  gap: 5%;
-  justify-content: space-evenly;
   text-align: center;
 }
 
@@ -36,14 +43,36 @@
 }
 
 .current_measurement_table__measurement_element {
-  background-color: #add8e6;
+  background-color: var(--dashboard-tile-colour);
   border-radius: 1rem;
   flex: 1;
   padding: 1rem;
 }
 
+.dashboard_table__element {
+  background-color: var(--dashboard-tile-colour);
+  border-radius: 1rem;
+  flex: 1;
+  width: 30%;
+  height: 50%;
+  margin: 3rem auto;
+  padding: 0 1rem 0 0;
+}
+
+.home__dashboard_table {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 5%;
+  justify-content: space-evenly;
+}
+
+.dashboard_table__element_header {
+  display: none;
+}
+
 @media (max-width: 1001px) {
-  .home__current_measurement_table {
+  .home__dashboard_table {
     flex-direction: column;
     justify-content: space-evenly;
   }
@@ -51,5 +80,19 @@
   .current_measurement_table__measurement_element {
     width: 80%;
     margin: 1rem auto;
+    background-color: #add8e6;
+    border-radius: 1rem;
+    flex: 1;
+    padding: 1rem;
+  }
+
+  .dashboard_table__element {
+    width: 80%;
+    margin: 1rem auto;
+  }
+
+  .dashboard_table__element_header {
+    display: block;
+    text-align: center;
   }
 }

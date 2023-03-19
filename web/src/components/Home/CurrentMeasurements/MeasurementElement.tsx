@@ -1,4 +1,4 @@
-import { getMeasurementUnit, Measurement } from "../../models/measurement";
+import { getMeasurementUnit, Measurement } from "../../../models/measurement";
 
 export interface IMeasurementElement {
   imageUrl: string;

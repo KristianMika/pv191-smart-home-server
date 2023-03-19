@@ -18,6 +18,13 @@ export enum MeasurementType {
   Humidity = "Humidity",
   Voc = "VOC Index",
 }
+export enum MeasurementAttribute {
+  Temperature = "temperature",
+  Humidity = "humidity",
+  Voc = "voc_index",
+  MeasurementTime = "measurement_time",
+}
+
 export const getMeasurementType = (attribute: string): MeasurementType => {
   switch (attribute) {
     case "temperature":
