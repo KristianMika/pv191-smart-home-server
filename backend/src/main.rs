@@ -35,7 +35,8 @@ async fn main() -> io::Result<()> {
     let server_state = ServerState {
         repo: Arc::new(
             PostgresServerRepo::from_url(
-                &env::var(DATABASE_URL_ENV).expect(&format!("{} must be set", DATABASE_URL_ENV)),
+                &env::var(DATABASE_URL_ENV)
+                    .unwrap_or_else(|_| panic!("{} must be set", DATABASE_URL_ENV)),
             )
             .unwrap(),
         ),

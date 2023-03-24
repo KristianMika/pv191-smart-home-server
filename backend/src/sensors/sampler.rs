@@ -1,25 +1,32 @@
-use crate::server_repo::postgres_server_repo::models::NewMeasurementStore;
-
 use super::models::HumidityTemperatureMeasurement;
 use super::{SensorError, DHT11_PIN};
+use crate::server_repo::postgres_server_repo::models::NewMeasurementStore;
 use error_stack::{IntoReport, Report, Result, ResultExt};
+use linux_embedded_hal::I2cdev;
 use log::error;
 use rppal::gpio::{Gpio, Mode};
 use rppal::hal::Delay;
 use rppal_dht11::Dht11;
-
+use sgp40::Sgp40;
+const SGP40_I2C_ADDRESS: u8 = 0x59;
+type VocIndex = u16;
 /// Can execute measurements using connected sensors
 pub struct Sampler {
     /// DHT11 sensor for humidity and temperature
     dht11: Dht11,
+    /// Sgp40 sensor for VOC index
+    sgp40: Sgp40<I2cdev, Delay>,
 }
 
 impl Sampler {
     /// Creates a new instances of `Self`
     pub fn new() -> Result<Self, SensorError> {
-        Ok(Self {
+        let mut sampler = Self {
             dht11: Self::init_dht11(DHT11_PIN).attach_printable("Coudln't init dht11")?,
-        })
+            sgp40: Self::init_sgp40("/dev/i2c-1")?,
+        };
+        sampler.drop_voc_measurements(45)?;
+        Ok(sampler)
     }
 
     /// Reads temperature and humidity using the connected sensors
@@ -53,10 +60,32 @@ impl Sampler {
         Ok(Dht11::new(pin))
     }
 
+    fn init_sgp40(device_name: &str) -> Result<Sgp40<I2cdev, Delay>, SensorError> {
+        let i2c_dev = I2cdev::new(device_name)
+            .into_report()
+            .change_context(SensorError)
+            .attach_printable(format!("Couldn't get I2C device {}", device_name))?;
+        Ok(Sgp40::new(i2c_dev, SGP40_I2C_ADDRESS, Delay))
+    }
+
+    fn measure_voc_index(&mut self) -> error_stack::Result<VocIndex, SensorError> {
+        self.sgp40.measure_voc_index().map_err(|err| {
+            error_stack::Report::new(SensorError)
+                .attach_printable(format!("Couldn't perform VOC measurement: {:?}", err))
+        })
+    }
+
+    fn drop_voc_measurements(&mut self, n: u32) -> Result<(), SensorError> {
+        for _ in 0..n {
+            self.measure_voc_index()?;
+        }
+        Ok(())
+    }
+
     pub fn perfom_measurement(&mut self) -> error_stack::Result<NewMeasurementStore, SensorError> {
         let mut temperature = None;
         let mut humidity = None;
-        let voc_index = None;
+        let mut voc_index = None;
 
         match self.read_humidity_temperature() {
             Ok(sample) => {
@@ -67,10 +96,16 @@ impl Sampler {
                 error!("{:?}", err)
             }
         };
+
+        match self.measure_voc_index() {
+            Ok(sample) => voc_index = Some(sample),
+            Err(err) => error!("{:?}", err),
+        };
+
         Ok(NewMeasurementStore {
             temperature,
             humidity: humidity.map(|val| val as i32),
-            voc_index,
+            voc_index: voc_index.map(|val| val as i32),
             measurement_time: None,
         })
     }
