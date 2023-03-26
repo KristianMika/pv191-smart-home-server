@@ -1,5 +1,5 @@
 use super::models::HumidityTemperatureMeasurement;
-use super::{SensorError, DHT11_PIN};
+use super::SensorError;
 use crate::server_repo::postgres_server_repo::models::NewMeasurementStore;
 use error_stack::{IntoReport, Report, Result, ResultExt};
 use linux_embedded_hal::I2cdev;
@@ -20,10 +20,10 @@ pub struct Sampler {
 
 impl Sampler {
     /// Creates a new instances of `Self`
-    pub fn new() -> Result<Self, SensorError> {
+    pub fn new(dht11_pin: u8, voc_i2c_dev: &str) -> Result<Self, SensorError> {
         let mut sampler = Self {
-            dht11: Self::init_dht11(DHT11_PIN).attach_printable("Coudln't init dht11")?,
-            sgp40: Self::init_sgp40("/dev/i2c-1")?,
+            dht11: Self::init_dht11(dht11_pin).attach_printable("Coudln't init dht11")?,
+            sgp40: Self::init_sgp40(voc_i2c_dev)?,
         };
         sampler.drop_voc_measurements(45)?;
         Ok(sampler)

@@ -35,8 +35,8 @@ pub fn get_voc_evaluation(voc: u32) -> error_stack::Result<String, SensorError> 
 }
 
 impl DisplayPrinter {
-    pub fn new() -> error_stack::Result<Self, DisplayPrinterError> {
-        let i2c = I2cdev::new("/dev/i2c-1")
+    pub fn new(i2c_dev: &str) -> error_stack::Result<Self, DisplayPrinterError> {
+        let i2c = I2cdev::new(i2c_dev)
             .into_report()
             .change_context(DisplayPrinterError)
             .attach_printable("Couldn't init i2c-1 device")?;

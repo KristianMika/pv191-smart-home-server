@@ -3,8 +3,6 @@ use std::{error::Error, fmt};
 pub(crate) mod models;
 pub(crate) mod sampler;
 
-const DHT11_PIN: u8 = 23;
-
 /// An error that ocurred when interracting with a sensor
 #[derive(Debug)]
 pub struct SensorError;
