@@ -12,7 +12,9 @@ PV191 Smart Home Server is a simple server application that measures temperature
 
 The setup utilizes Adafruit [SGP40 Air Quality Sensor](https://docs.rs-online.com/1956/A700000007055193.pdf). The sensor uses the aforementioned DHT22 sensor to provide data for the computation of compensated VOC index. The index is computed using [Sensirion VOC algorithm](https://github.com/Sensirion/gas-index-algorithm). The algorithm outputs a natural number in the range [0, 500 signalizing indoor air quality. Values below 100 indicate a typical indoor gas composition, while values above 100 indicate deteriorated air quality.
 
-![VOC scale](./.github/images/voc_scale.jpeg)
+<p align="center">
+    <img src="./.github/images/voc_scale.jpeg" alt="VOC scale">
+</p>
 
 ## Installation
 
