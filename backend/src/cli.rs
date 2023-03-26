@@ -9,11 +9,11 @@ pub(crate) struct Args {
     display_i2c_dev: String,
 
     /// I2C device to use for the VOC sensor
-    #[arg(long, default_value_t = String::from("/dev/i2c-2"))]
+    #[arg(long, default_value_t = String::from("/dev/i2c-4"))]
     voc_i2c_dev: String,
 
     /// DHT11 pin
-    #[arg(long, default_value_t = 23)]
+    #[arg(long, default_value_t = 25)]
     dht11_pin: u8,
 
     /// Measurement period in seconds
