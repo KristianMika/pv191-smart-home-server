@@ -44,6 +44,7 @@ export const Home: React.FC = () => {
       setMeasurementTime(new Date(data.measurement_time));
       setMultiMeasurement(measurements);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className="home_page main_page">
