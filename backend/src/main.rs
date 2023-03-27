@@ -7,7 +7,8 @@ mod server_repo;
 mod state;
 
 use crate::display_printer::DisplayPrinter;
-use crate::endpoints::past_measurements;
+use crate::endpoints::current_measurement::get_current_measurement;
+use crate::endpoints::past_measurements::get_past_measurements;
 use crate::{
     sensors::sampler::Sampler, server_repo::postgres_server_repo::PostgresServerRepo,
     state::ServerState,
@@ -17,7 +18,6 @@ use actix_web::{web::Data, App, HttpServer};
 use clap::Parser;
 use cli::Args;
 use dotenvy::dotenv;
-use endpoints::measurement;
 use log::info;
 use std::time::Duration;
 use std::{env, io, sync::Arc};
@@ -69,8 +69,8 @@ async fn main() -> io::Result<()> {
             .app_data(server_state.clone())
             // TODO: for development only
             .wrap(Cors::default().allowed_origin("http://localhost:3000"))
-            .service(measurement)
-            .service(past_measurements)
+            .service(get_current_measurement)
+            .service(get_past_measurements)
             .service(actix_files::Files::new("/", WEB_FILES_PATH).index_file(INDEX_FILE))
     })
     .bind(LISTENING_ADDRESS)?
