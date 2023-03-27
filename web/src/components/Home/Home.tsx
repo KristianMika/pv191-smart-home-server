@@ -21,7 +21,7 @@ export const Home: React.FC = () => {
       setLastNotificationTime(Date.now());
       new Notification("High VOC alert", {
         body: `We have detected VOC of ${vocIndex}!`,
-        icon: "logo192.png",
+        icon: "voc-notification-icon.png",
       });
     }
   };
