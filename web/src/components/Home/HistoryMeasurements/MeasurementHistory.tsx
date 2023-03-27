@@ -4,6 +4,9 @@ import { MeasurementAttribute } from "../../../models/measurement";
 import { IMeasurementResponse } from "../../../models/measurementResponse";
 import { MeasurementChart } from "./MeasurementChart";
 
+const TEMPERATURE_STROKE_COLOR = "#FFA300";
+const HUMIDITY_STROKE_COLOR = "#42bdff";
+const VOC_INDEX_STROKE_COLOR = "#34a12e";
 export const MeasurementHistory: React.FC = () => {
   const [pastMeasurements, setPastMeasurements] = useState<
     IMeasurementResponse[]
@@ -28,14 +31,17 @@ export const MeasurementHistory: React.FC = () => {
       <MeasurementChart
         measurements={pastMeasurements}
         measurementKey={MeasurementAttribute.Temperature}
+        strokeColor={TEMPERATURE_STROKE_COLOR}
       />
       <MeasurementChart
         measurements={pastMeasurements}
         measurementKey={MeasurementAttribute.Humidity}
+        strokeColor={HUMIDITY_STROKE_COLOR}
       />
       <MeasurementChart
         measurements={pastMeasurements}
         measurementKey={MeasurementAttribute.Voc}
+        strokeColor={VOC_INDEX_STROKE_COLOR}
       />
     </div>
   );

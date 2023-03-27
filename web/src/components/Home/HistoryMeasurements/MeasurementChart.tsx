@@ -16,10 +16,10 @@ import { IMeasurementResponse } from "../../../models/measurementResponse";
 export interface IMeasurementChart {
   measurements: IMeasurementResponse[];
   measurementKey: MeasurementAttribute;
+  strokeColor: string;
 }
 export const MeasurementChart: React.FC<IMeasurementChart> = (props) => {
   const yAxisPadding = 0.5;
-  const strokeColor = "#82ca9d";
   const strokeWidth = 3;
   return (
     <div className="dashboard_table__element">
@@ -54,7 +54,7 @@ export const MeasurementChart: React.FC<IMeasurementChart> = (props) => {
           />
           <Scatter
             dataKey={props.measurementKey}
-            stroke={strokeColor}
+            stroke={props.strokeColor}
             strokeWidth={strokeWidth}
           />
         </ScatterChart>
