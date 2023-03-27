@@ -4,8 +4,8 @@ import {
   YAxis,
   CartesianGrid,
   ResponsiveContainer,
-  ScatterChart,
-  Scatter,
+  Line,
+  LineChart,
 } from "recharts";
 import {
   getMeasurementType,
@@ -27,7 +27,7 @@ export const MeasurementChart: React.FC<IMeasurementChart> = (props) => {
         {getMeasurementType(props.measurementKey)}
       </h2>
       <ResponsiveContainer width="100%" aspect={1.5}>
-        <ScatterChart
+        <LineChart
           data={props.measurements.map((measurement) => {
             if (!measurement.measurement_time.toISOString()) {
             }
@@ -52,12 +52,13 @@ export const MeasurementChart: React.FC<IMeasurementChart> = (props) => {
               (dataMax: number) => dataMax + yAxisPadding,
             ]}
           />
-          <Scatter
+          <Line
+            type="monotone"
             dataKey={props.measurementKey}
             stroke={props.strokeColor}
             strokeWidth={strokeWidth}
           />
-        </ScatterChart>
+        </LineChart>
       </ResponsiveContainer>
     </div>
   );
