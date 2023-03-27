@@ -20,7 +20,7 @@ export interface IMeasurementChart {
 }
 export const MeasurementChart: React.FC<IMeasurementChart> = (props) => {
   const yAxisPadding = 0.5;
-  const strokeWidth = 3;
+  const strokeWidth = 2;
   return (
     <div className="dashboard_table__element">
       <h2 className="dashboard_table__element_header">
