@@ -2,6 +2,7 @@ mod cli;
 mod display_printer;
 mod endpoints;
 mod models;
+mod request_validator;
 mod sensors;
 mod server_repo;
 mod state;
@@ -9,6 +10,7 @@ mod state;
 use crate::display_printer::DisplayPrinter;
 use crate::endpoints::current_measurement::get_current_measurement;
 use crate::endpoints::past_measurements::get_past_measurements;
+use crate::endpoints::register::post_register;
 use crate::{
     sensors::sampler::Sampler, server_repo::postgres_server_repo::PostgresServerRepo,
     state::ServerState,
@@ -71,6 +73,7 @@ async fn main() -> io::Result<()> {
             .wrap(Cors::default().allowed_origin("http://localhost:3000"))
             .service(get_current_measurement)
             .service(get_past_measurements)
+            .service(post_register)
             .service(actix_files::Files::new("/", WEB_FILES_PATH).index_file(INDEX_FILE))
     })
     .bind(LISTENING_ADDRESS)?

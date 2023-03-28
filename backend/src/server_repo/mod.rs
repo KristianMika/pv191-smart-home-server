@@ -1,4 +1,4 @@
-use self::postgres_server_repo::models::{MeasurementStore, NewMeasurementStore};
+use self::postgres_server_repo::models::{MeasurementStore, NewMeasurementStore, UserStore};
 use chrono::{DateTime, Local};
 use std::{error::Error, fmt};
 
@@ -20,10 +20,23 @@ pub trait ServerRepo {
         &self,
         from: DateTime<Local>,
     ) -> error_stack::Result<Vec<MeasurementStore>, DbError>;
+
+    fn create_new_user(
+        &self,
+        first_name: &str,
+        user_login: &str,
+        user_password_hash: &str,
+    ) -> error_stack::Result<UserStore, DbError>;
 }
 
 #[derive(Debug)]
-pub struct DbError;
+pub enum DbError {
+    ConstraintError,
+    InitError,
+    GeneralError,
+    StoreError,
+    FetchError,
+}
 
 impl Error for DbError {}
 impl fmt::Display for DbError {

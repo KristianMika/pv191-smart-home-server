@@ -11,3 +11,16 @@ diesel::table! {
         measurement_time -> Timestamptz,
     }
 }
+
+diesel::table! {
+    use diesel::sql_types::*;
+
+    usercontext (id) {
+        id -> Int4,
+        first_name -> Varchar,
+        user_login -> Varchar,
+        user_password_hash -> Varchar,
+    }
+}
+
+diesel::allow_tables_to_appear_in_same_query!(measurement, usercontext,);

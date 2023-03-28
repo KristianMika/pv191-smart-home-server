@@ -28,3 +28,20 @@ pub struct NewMeasurementStore {
     /// Time of the measurement
     pub measurement_time: Option<DateTime<Local>>,
 }
+
+#[derive(Debug, Queryable, Clone, Default)]
+#[diesel(table_name = usercontext)]
+pub struct UserStore {
+    pub id: i32,
+    pub first_name: String,
+    pub user_login: String,
+    pub user_password_hash: String,
+}
+
+#[derive(Insertable, Clone)]
+#[diesel(table_name = usercontext)]
+pub struct NewUserStore<'a> {
+    pub first_name: &'a str,
+    pub user_login: &'a str,
+    pub user_password_hash: &'a str,
+}
