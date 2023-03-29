@@ -70,10 +70,11 @@ async fn main() -> io::Result<()> {
         App::new()
             .app_data(server_state.clone())
             // TODO: for development only
-            .wrap(Cors::default().allowed_origin("http://localhost:3000"))
+            .wrap(Cors::permissive())
             .service(get_current_measurement)
             .service(get_past_measurements)
             .service(post_register)
+            .service(actix_files::Files::new("/register", WEB_FILES_PATH).index_file(INDEX_FILE))
             .service(actix_files::Files::new("/", WEB_FILES_PATH).index_file(INDEX_FILE))
     })
     .bind(LISTENING_ADDRESS)?
