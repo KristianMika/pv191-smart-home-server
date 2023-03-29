@@ -70,7 +70,36 @@
 .dashboard_table__element_header {
   display: none;
 }
+.register_form__wrapper {
+  width: 50%;
+  height: 50%;
+  margin: auto;
+}
 
+.register_page__form {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.form__input {
+  height: 2rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: none;
+}
+
+.form__input:focus {
+  outline: solid 0.25rem rgb(109, 109, 239);
+}
+
+.submit_button {
+  width: 50%;
+  height: 2.5rem;
+  border-radius: 1rem;
+  margin: 1rem auto;
+}
 @media (max-width: 1001px) {
   .home__dashboard_table {
     flex-direction: column;
