@@ -1,5 +1,5 @@
 @import "normalize.css";
-
+@import "bootstrap/dist/css/bootstrap.min.css";
 :root {
   /* Colour definition */
   --coral-blue: #add8e6;
