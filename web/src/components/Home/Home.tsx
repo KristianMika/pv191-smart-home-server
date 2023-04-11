@@ -2,12 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Measurement, MeasurementType } from "../../models/measurement";
 import { IMeasurementResponse } from "../../models/measurementResponse";
-import { Refreshing } from "../common/Refreshing";
 import { CurrentMeasurementTable } from "./CurrentMeasurements/CurrentMeasurementTable";
 import { MeasurementTime } from "./CurrentMeasurements/MeasurementTime";
 import { MeasurementHistory } from "./HistoryMeasurements/MeasurementHistory";
 
-const REFRESH_INTERVAL_MS = 10 * 1000;
 const VOC_INDEX_NOTIFICATION_THRESHOLD = 60;
 const TEN_MINUTES = 1000 * 60 * 10;
 
@@ -49,11 +47,9 @@ export const Home: React.FC = () => {
   return (
     <div className="home_page main_page">
       <h2>Hi, {username}!</h2>
-      <Refreshing interval={REFRESH_INTERVAL_MS}>
-        <CurrentMeasurementTable measurements={multiMeasurement} />
-        <MeasurementHistory />
-        <MeasurementTime measurementTime={measurementTime} />
-      </Refreshing>
+      <CurrentMeasurementTable measurements={multiMeasurement} />
+      <MeasurementHistory />
+      <MeasurementTime measurementTime={measurementTime} />
     </div>
   );
 };
