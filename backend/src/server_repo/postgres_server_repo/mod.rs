@@ -1,8 +1,10 @@
 use self::models::{NewMeasurementStore, UserStore};
 use super::{DbError, ServerRepo};
 use crate::server_repo::postgres_server_repo::models::{MeasurementStore, NewUserStore};
+use diesel::dsl::sql;
 use diesel::result::DatabaseErrorKind;
 use diesel::result::Error::DatabaseError;
+use diesel::sql_types::BigInt;
 use diesel::ExpressionMethods;
 use diesel::{
     r2d2::{ConnectionManager, Pool, PoolError, PooledConnection},
@@ -62,6 +64,12 @@ impl ServerRepo for PostgresServerRepo {
 
         let measurements: Vec<MeasurementStore> = measurement
             .filter(measurement_time.ge(datetime_from))
+            .distinct_on(sql::<BigInt>(
+                "date_trunc('minute', measurement_time) - (extract(minute from measurement_time) % 5) * interval '1 minute'",
+            ))
+            // FIXME pls
+            // we have to order before using `distinct_on` or else we end up with random measurements from every interval 
+            // .order_by(measurement_time.desc()) 
             .load::<MeasurementStore>(&mut self.get_connection()?)
             .into_report()
             .change_context(DbError::FetchError)
