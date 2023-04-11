@@ -9,6 +9,13 @@ import { MeasurementHistory } from "./HistoryMeasurements/MeasurementHistory";
 const VOC_INDEX_NOTIFICATION_THRESHOLD = 60;
 const TEN_MINUTES = 1000 * 60 * 10;
 
+const generateHIghVocNotification = (vocIndex: number) => {
+  new Notification("High VOC alert", {
+    body: `We have detected VOC of ${vocIndex}!`,
+    icon: "voc-notification-icon.png",
+  });
+};
+
 export const Home: React.FC = () => {
   const checkVoc = (vocIndex?: number) => {
     if (
@@ -17,10 +24,7 @@ export const Home: React.FC = () => {
       lastNotificationTime > Date.now() - TEN_MINUTES
     ) {
       setLastNotificationTime(Date.now());
-      new Notification("High VOC alert", {
-        body: `We have detected VOC of ${vocIndex}!`,
-        icon: "voc-notification-icon.png",
-      });
+      generateHIghVocNotification(vocIndex);
     }
   };
   const username = "Andy"; //TODO: load from JWT

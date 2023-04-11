@@ -57,6 +57,8 @@ export const MeasurementChart: React.FC<IMeasurementChart> = (props) => {
             dataKey={props.measurementKey}
             stroke={props.strokeColor}
             strokeWidth={strokeWidth}
+            isAnimationActive={false}
+            dot={false}
           />
         </LineChart>
       </ResponsiveContainer>

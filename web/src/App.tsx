@@ -6,7 +6,7 @@ import { Refreshing } from "./components/common/Refreshing";
 import { Home } from "./components/Home/Home";
 import { PageNavbar } from "./components/Navbar";
 import { Register } from "./components/register/Register";
-const REFRESH_INTERVAL_MS = 60 * 1000;
+const REFRESH_INTERVAL_MS = 30 * 1000;
 
 function App() {
   useEffect(() => {
