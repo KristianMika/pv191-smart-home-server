@@ -1,5 +1,8 @@
 use clap::{arg, command, Parser};
+use clap_num::number_range;
 
+const MEASUREMENT_PERIOD_MIN_SECONDS: u64 = 30;
+const MEASUREMENT_PERIOD_MAX_SECONDS: u64 = 5 * 60;
 /// A simple server application for Raspberry PI that measures temperature, humidity, and VOC index, and provides the data via a web interface.
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -16,9 +19,17 @@ pub(crate) struct Args {
     #[arg(long, default_value_t = 25)]
     dht11_pin: u8,
 
-    /// Measurement period in seconds
-    #[arg(long, default_value_t = 30)]
+    /// Measurement period in seconds in range [30, 300]
+    #[arg(long, default_value_t = 30, value_parser=measurement_period_seconds_parser)]
     periodic_sampling_seconds: u64,
+}
+
+fn measurement_period_seconds_parser(period: &str) -> Result<u64, String> {
+    number_range(
+        period,
+        MEASUREMENT_PERIOD_MIN_SECONDS,
+        MEASUREMENT_PERIOD_MAX_SECONDS,
+    )
 }
 
 impl Args {

@@ -12,6 +12,7 @@ actix-web = "4"
 bcrypt = "0.14"
 chrono = { version = "0.4", features = ["serde"] }
 clap = { version = "4.1", features = ["derive"] }
+clap-num = "1.0"
 diesel = { version = "2.0", features = ["postgres", "r2d2", "chrono"] }
 diesel_migrations = "2.0"
 dotenvy = "0.15"
