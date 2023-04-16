@@ -106,6 +106,22 @@ impl ServerRepo for PostgresServerRepo {
 
         Ok(created_user)
     }
+
+    fn get_user(&self, login: &str) -> error_stack::Result<Option<UserStore>, DbError> {
+        use schema::usercontext::dsl::*;
+
+        let result: Option<UserStore> = usercontext
+            .filter(user_login.eq(login))
+            .limit(1)
+            .load::<UserStore>(&mut self.get_connection()?)
+            .into_report()
+            .change_context(DbError::FetchError)
+            .attach_printable(format!("Couldn't get user with login {login}"))?
+            .first()
+            .cloned();
+
+        Ok(result)
+    }
 }
 
 impl PostgresServerRepo {

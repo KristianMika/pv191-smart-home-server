@@ -27,6 +27,9 @@ pub trait ServerRepo {
         user_login: &str,
         user_password_hash: &str,
     ) -> error_stack::Result<UserStore, DbError>;
+
+    /// Fetches a user record of the user with the specific `login`
+    fn get_user(&self, login: &str) -> error_stack::Result<Option<UserStore>, DbError>;
 }
 
 #[derive(Debug)]

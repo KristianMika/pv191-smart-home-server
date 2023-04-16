@@ -1,19 +1,14 @@
 use crate::{
-    endpoints::models::RegisterRequest,
+    endpoints::models::{RegisterRequest, Response},
     server_repo::{DbError, ServerRepo},
     state::ServerState,
 };
 use actix_web::{post, web, HttpResponse, Responder};
 use bcrypt::hash;
 use log::error;
-use serde::Serialize;
 
 static BCRYPT_COST: u32 = 10;
 
-#[derive(Serialize)]
-struct Response {
-    message: String,
-}
 #[post("/register")]
 pub(crate) async fn post_register(
     request: web::Json<RegisterRequest>,

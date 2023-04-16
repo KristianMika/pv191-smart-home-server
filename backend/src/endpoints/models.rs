@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::request_validator::RequestValidator;
 
@@ -15,6 +15,17 @@ impl RegisterRequest {
             && RequestValidator::does_login_meet_requirements(&self.login)
             && RequestValidator::does_password_meet_requirements(&self.password)
     }
+}
+
+#[derive(Deserialize)]
+pub(crate) struct LoginRequest {
+    pub login: String,
+    pub password: String,
+}
+
+#[derive(Serialize)]
+pub(crate) struct Response {
+    pub message: String,
 }
 
 #[cfg(test)]

@@ -9,6 +9,7 @@ mod state;
 
 use crate::display_printer::DisplayPrinter;
 use crate::endpoints::current_measurement::get_current_measurement;
+use crate::endpoints::login::post_login;
 use crate::endpoints::past_measurements::get_past_measurements;
 use crate::endpoints::register::post_register;
 use crate::{
@@ -74,6 +75,7 @@ async fn main() -> io::Result<()> {
             .service(get_current_measurement)
             .service(get_past_measurements)
             .service(post_register)
+            .service(post_login)
             .service(actix_files::Files::new("/register", WEB_FILES_PATH).index_file(INDEX_FILE))
             .service(actix_files::Files::new("/", WEB_FILES_PATH).index_file(INDEX_FILE))
     })
