@@ -77,6 +77,7 @@ async fn main() -> io::Result<()> {
             .service(get_past_measurements)
             .service(post_register)
             .service(post_login)
+            .service(actix_files::Files::new("/login", WEB_FILES_PATH).index_file(INDEX_FILE))
             .service(actix_files::Files::new("/register", WEB_FILES_PATH).index_file(INDEX_FILE))
             .service(actix_files::Files::new("/", WEB_FILES_PATH).index_file(INDEX_FILE))
     })
