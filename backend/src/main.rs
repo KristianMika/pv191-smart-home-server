@@ -1,6 +1,7 @@
 mod cli;
 mod display_printer;
 mod endpoints;
+mod middleware;
 mod models;
 mod request_validator;
 mod sensors;
