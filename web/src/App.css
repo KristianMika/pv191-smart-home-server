@@ -100,6 +100,29 @@
   border-radius: 1rem;
   margin: 1rem auto;
 }
+
+.login_page__form {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10%;
+}
+
+.login_page__form input {
+  border-radius: 0.5rem;
+  border: none;
+  height: 3rem;
+  padding: 1rem;
+  width: 70%;
+}
+
+.login_form__wrapper {
+  width: 50%;
+  height: 50%;
+  margin: auto;
+}
 @media (max-width: 1001px) {
   .home__dashboard_table {
     flex-direction: column;

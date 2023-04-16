@@ -10,6 +10,7 @@ const MIN_LOGIN_LENGTH = 4;
 const MAX_LOGIN_LENGTH = 20;
 const MIN_PASSWORD_LENGTH = 8;
 const MAX_PASSWORD_LENGTH = 100;
+
 export const Register: React.FC = () => {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
