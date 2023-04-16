@@ -21,11 +21,10 @@ pub struct Sampler {
 impl Sampler {
     /// Creates a new instances of `Self`
     pub fn new(dht11_pin: u8, voc_i2c_dev: &str) -> Result<Self, SensorError> {
-        let mut sampler = Self {
+        let sampler = Self {
             dht11: Self::init_dht11(dht11_pin).attach_printable("Coudln't init dht11")?,
             sgp40: Self::init_sgp40(voc_i2c_dev)?,
         };
-        sampler.drop_voc_measurements(45)?;
         Ok(sampler)
     }
 
@@ -73,13 +72,6 @@ impl Sampler {
             error_stack::Report::new(SensorError)
                 .attach_printable(format!("Couldn't perform VOC measurement: {:?}", err))
         })
-    }
-
-    fn drop_voc_measurements(&mut self, n: u32) -> Result<(), SensorError> {
-        for _ in 0..n {
-            self.measure_voc_index()?;
-        }
-        Ok(())
     }
 
     pub fn perfom_measurement(&mut self) -> error_stack::Result<NewMeasurementStore, SensorError> {
