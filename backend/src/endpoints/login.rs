@@ -24,7 +24,7 @@ pub(crate) async fn post_login(
 
     if user.is_none() {
         return HttpResponse::BadRequest().json(Response {
-            message: "Unknown login.".into(),
+            message: "Invalid username or password".into(),
         });
     }
     let user = user.unwrap();
@@ -38,7 +38,7 @@ pub(crate) async fn post_login(
     };
     if !was_verification_successfull {
         return HttpResponse::BadRequest().json(Response {
-            message: "Invalid password".into(),
+            message: "Invalid username or password".into(),
         });
     }
 
