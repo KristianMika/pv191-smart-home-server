@@ -54,8 +54,11 @@ export const Register: React.FC = () => {
   const [formData, setFormData] = useState<RegisterFormData>(emptyFormData);
   return (
     <div className="register_page main_page">
-      <div className="register_form__wrapper">
-        <form className="register_page__form" onSubmit={handleSubmit}>
+      <div className="register_form__wrapper form__wrapper">
+        <form
+          className="register_page__form page__form"
+          onSubmit={handleSubmit}
+        >
           <input
             placeholder="First Name"
             type="text"

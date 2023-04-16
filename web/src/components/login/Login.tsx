@@ -42,9 +42,10 @@ export const Login: React.FC = () => {
 
   return (
     <div className="login_page main_page">
-      <div className="login_form__wrapper">
-        <form className="login_page__form" onSubmit={handleSubmit}>
+      <div className="login_form__wrapper form__wrapper">
+        <form className="login_page__form page__form" onSubmit={handleSubmit}>
           <input
+            className="form__input"
             placeholder="Login"
             type="text"
             name="login"
@@ -54,6 +55,7 @@ export const Login: React.FC = () => {
           />
 
           <input
+            className="form__input"
             placeholder="Password"
             type="password"
             name="password"
@@ -62,7 +64,7 @@ export const Login: React.FC = () => {
             required
           />
 
-          <input type="submit" value="Submit" />
+          <input className="submit_button" type="submit" value="Submit" />
         </form>
       </div>
     </div>
