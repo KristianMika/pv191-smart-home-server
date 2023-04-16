@@ -1,3 +1,4 @@
+mod auth;
 mod cli;
 mod display_printer;
 mod endpoints;
@@ -8,25 +9,29 @@ mod sensors;
 mod server_repo;
 mod state;
 
+use crate::auth::User;
 use crate::display_printer::DisplayPrinter;
-use crate::endpoints::current_measurement::get_current_measurement;
-use crate::endpoints::login::post_login;
-use crate::endpoints::past_measurements::get_past_measurements;
-use crate::endpoints::register::post_register;
+use crate::endpoints::{
+    current_measurement::get_current_measurement, login::post_login,
+    past_measurements::get_past_measurements, register::post_register,
+};
 use crate::{
     sensors::sampler::Sampler, server_repo::postgres_server_repo::PostgresServerRepo,
     state::ServerState,
 };
 use actix_cors::Cors;
-use actix_web::{web::Data, App, HttpServer};
+use actix_jwt_auth_middleware::use_jwt::UseJWTOnApp;
+use actix_jwt_auth_middleware::{Authority, TokenSigner};
+use actix_web::web::Data;
+use actix_web::{web, App, HttpServer};
 use clap::Parser;
 use cli::Args;
 use dotenvy::dotenv;
+use ed25519_compact::KeyPair;
+use jwt_compact::alg::Ed25519;
 use log::info;
-use std::time::Duration;
-use std::{env, io, sync::Arc};
-use tokio::sync::Mutex;
-use tokio::{task, time}; // 1.3.0
+use std::{env, io, sync::Arc, time::Duration};
+use tokio::{sync::Mutex, task, time};
 
 static LISTENING_ADDRESS: &str = "0.0.0.0:8080";
 static WEB_FILES_PATH: &str = "/var/www/pv191-smart-home-server/";
@@ -41,6 +46,7 @@ async fn main() -> io::Result<()> {
 
     let db_url =
         env::var(DATABASE_URL_ENV).unwrap_or_else(|_| panic!("{} must be set", DATABASE_URL_ENV));
+
     let server_state = ServerState {
         repo: Arc::new(PostgresServerRepo::from_url(&db_url).unwrap()),
         sampler: Arc::new(Mutex::new(
@@ -50,6 +56,7 @@ async fn main() -> io::Result<()> {
             DisplayPrinter::new(args.get_display_i2c_dev()).unwrap(),
         )),
     };
+
     let server_state = Data::new(server_state);
     let server_state_sampling = server_state.clone();
     task::spawn(async move {
@@ -67,8 +74,22 @@ async fn main() -> io::Result<()> {
         }
     });
 
+    let key_pair = KeyPair::generate();
+
     info!("Starting server on address {}.", LISTENING_ADDRESS);
     HttpServer::new(move || {
+        let authority = Authority::<User, Ed25519, _, _>::new()
+            .refresh_authorizer(|| async move { Ok(()) })
+            .token_signer(Some(
+                TokenSigner::new()
+                    .signing_key(key_pair.sk.clone())
+                    .algorithm(Ed25519)
+                    .build()
+                    .expect(""),
+            ))
+            .verifying_key(key_pair.pk)
+            .build()
+            .expect("Couldn't build authority");
         App::new()
             .app_data(server_state.clone())
             // TODO: for development only
@@ -80,6 +101,7 @@ async fn main() -> io::Result<()> {
             .service(actix_files::Files::new("/login", WEB_FILES_PATH).index_file(INDEX_FILE))
             .service(actix_files::Files::new("/register", WEB_FILES_PATH).index_file(INDEX_FILE))
             .service(actix_files::Files::new("/", WEB_FILES_PATH).index_file(INDEX_FILE))
+            .use_jwt(authority, web::scope("/api"))
     })
     .bind(LISTENING_ADDRESS)?
     .run()

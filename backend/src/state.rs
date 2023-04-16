@@ -1,7 +1,10 @@
+use actix_jwt_auth_middleware::{Authority, TokenSigner};
 use error_stack::ResultExt;
+use jwt_compact::alg::Ed25519;
 use tokio::sync::Mutex;
 
 use crate::{
+    auth::User,
     display_printer::DisplayPrinter,
     sensors::sampler::Sampler,
     server_repo::{postgres_server_repo::PostgresServerRepo, ServerRepo},
