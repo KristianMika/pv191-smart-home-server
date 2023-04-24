@@ -4,7 +4,7 @@ use chrono::{Duration, Local};
 use log::error;
 
 /// Sends history measurements within the last 24 hours
-#[get("/api/past_measurements")]
+#[get("/past_measurements")]
 pub async fn get_past_measurements(state: web::Data<ServerState>) -> impl Responder {
     let one_day_ago = Local::now() - Duration::days(1);
 

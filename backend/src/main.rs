@@ -89,19 +89,22 @@ async fn main() -> io::Result<()> {
             ))
             .verifying_key(key_pair.pk)
             .build()
-            .expect("Couldn't build authority");
+            .expect("Couldn't build");
         App::new()
             .app_data(server_state.clone())
             // TODO: for development only
             .wrap(Cors::permissive())
-            .service(get_current_measurement)
-            .service(get_past_measurements)
             .service(post_register)
             .service(post_login)
+            .use_jwt(
+                authority,
+                web::scope("/api")
+                    .service(get_past_measurements)
+                    .service(get_current_measurement),
+            )
             .service(actix_files::Files::new("/login", WEB_FILES_PATH).index_file(INDEX_FILE))
             .service(actix_files::Files::new("/register", WEB_FILES_PATH).index_file(INDEX_FILE))
             .service(actix_files::Files::new("/", WEB_FILES_PATH).index_file(INDEX_FILE))
-            .use_jwt(authority, web::scope("/api"))
     })
     .bind(LISTENING_ADDRESS)?
     .run()
