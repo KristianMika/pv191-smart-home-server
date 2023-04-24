@@ -12,7 +12,7 @@ pub(crate) struct Args {
     display_i2c_dev: String,
 
     /// I2C device to use for the VOC sensor
-    #[arg(long, default_value_t = String::from("/dev/i2c-4"))]
+    #[arg(long, default_value_t = String::from("/dev/i2c-1"))]
     voc_i2c_dev: String,
 
     /// DHT11 pin
