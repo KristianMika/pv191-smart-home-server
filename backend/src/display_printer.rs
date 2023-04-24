@@ -134,7 +134,7 @@ impl DisplayPrinter {
                     .attach_printable("Couldn't get VOC string evaluation")?;
                 format!("{} {}", value, voc_evaluation)
             }
-            None => "error".into(),
+            None => "-".into(),
         };
         self.writeln(&format!("VOC: {}", to_print), text_style)
     }
@@ -146,7 +146,7 @@ impl DisplayPrinter {
     ) -> error_stack::Result<(), DisplayPrinterError> {
         let to_print = match temperature {
             Some(value) => format!("{:.1} C", value),
-            None => "Error".into(),
+            None => "-".into(),
         };
 
         self.writeln(&format!("Temp: {}", to_print), text_style)
@@ -159,7 +159,7 @@ impl DisplayPrinter {
     ) -> error_stack::Result<(), DisplayPrinterError> {
         let to_print = match humidity {
             Some(value) => format!("{}%", value),
-            None => "Error".into(),
+            None => "-".into(),
         };
 
         self.writeln(&format!("Humid: {}", to_print), text_style)
@@ -172,7 +172,7 @@ impl DisplayPrinter {
         let ip_to_print = if let Ok(ip_address) = local_ip() {
             ip_address.to_string()
         } else {
-            "Error".into()
+            "-".into()
         };
         self.writeln(&ip_to_print, text_style)
     }
