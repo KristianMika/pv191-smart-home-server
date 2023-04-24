@@ -5,6 +5,15 @@ export interface IMeasurementElement {
   measurement: Measurement;
 }
 
+// Returns the value is is not undefined and not null, returns a dash otherwise
+// note: if the value is 0, it is not considered undefined
+const valueOrDefault = (value?: number) => {
+  if (value === undefined || value === null) {
+    return "-";
+  }
+  return value;
+};
+
 export const MeasurementElement: React.FC<IMeasurementElement> = (
   props: IMeasurementElement
 ) => {
@@ -17,7 +26,7 @@ export const MeasurementElement: React.FC<IMeasurementElement> = (
       />
       <div className="measurement_element__label">
         <span className="measurement_element__value">
-          {props.measurement.value || "-"}
+          {valueOrDefault(props.measurement.value)}
         </span>{" "}
         <span className="measurement_element__unit">
           {getMeasurementUnit(props.measurement.type)}
