@@ -50,7 +50,7 @@ export const Home: React.FC = () => {
   }, []);
   return (
     <div className="home_page main_page">
-      <h2>Hi, {username}!</h2>
+      <h2 className="main_page__main_heading">Hi, {username}!</h2>
       <CurrentMeasurementTable measurements={multiMeasurement} />
       <MeasurementHistory />
       <MeasurementTime measurementTime={measurementTime} />

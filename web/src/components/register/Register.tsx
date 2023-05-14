@@ -65,6 +65,8 @@ export const Register: React.FC = () => {
   const [formData, setFormData] = useState<RegisterFormData>(emptyFormData);
   return (
     <div className="register_page main_page">
+      <h2 className="main_page__main_heading"> Hi stranger!</h2>
+      <h4 className="main_page__sub_heading">Start by creating your account</h4>
       <div className="register_form__wrapper form__wrapper">
         <form
           className="register_page__form page__form"

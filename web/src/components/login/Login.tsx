@@ -54,6 +54,10 @@ export const Login: React.FC = () => {
 
   return (
     <div className="login_page main_page">
+      <h2 className="main_page__main_heading">Welcome back! </h2>
+      <h4 className="main_page__sub_heading">
+        Continue by logging into your account
+      </h4>
       <div className="login_form__wrapper form__wrapper">
         <form className="login_page__form page__form" onSubmit={handleSubmit}>
           <input
