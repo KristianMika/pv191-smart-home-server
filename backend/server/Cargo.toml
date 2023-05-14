@@ -1,0 +1,56 @@
+[package]
+name = "server"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "A smart home server that measures info about the environment"
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+common = { path = "../common" }
+actix-cors = "0.6.4"
+actix-files = "0.6"
+actix-jwt-auth-middleware = "0.3"
+actix-web = "4"
+bcrypt = "0.14"
+chrono = { version = "0.4", features = ["serde"] }
+dotenvy = "0.15"
+env_logger = "0.10"
+ed25519-compact = "2.0"
+jwt-compact = { version = "0.7", features = ["ed25519-compact"] }
+log = "0.4"
+serde = { version = "1.0", features = ["derive"] }
+
+
+[package.metadata.deb]
+name = "pv191-smart-home-server"
+maintainer = "Kristian Mika <kristian.mika@protonmail.com>"
+copyright = "2023, Kristian Mika <kristian.mika@protonmail.com>"
+license-file = ["../../LICENSE.md", "0"]
+extended-description = "A smart home server that measures info about the environment"
+priority = "optional"
+depends = "libpq-dev"
+assets = [
+    [
+        "../target/aarch64-unknown-linux-gnu/release/server",
+        "/usr/bin/",
+        "755",
+    ],
+    [
+        "../target/aarch64-unknown-linux-gnu/release/sensor-controller",
+        "/usr/bin/",
+        "755",
+    ],
+    [
+        "../../web_files/**/*",
+        "/var/www/pv191-smart-home-server/",
+        "644",
+    ],
+]
+maintainer-scripts = "../../debian"
+systemd-units = [
+    { unit-name = "smart-home-controller" },
+    { unit-name = "smart-home-server" },
+]

@@ -14,7 +14,7 @@ mod sensors;
 
 const DATABASE_URL_ENV: &str = "DATABASE_URL";
 
-#[actix_web::main]
+#[tokio::main]
 async fn main() -> io::Result<()> {
     env_logger::init();
     dotenv().ok();

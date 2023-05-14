@@ -1,0 +1,23 @@
+[package]
+name = "sensor-controller"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+common = { path = "../common" }
+clap = { version = "4.1", features = ["derive"] }
+clap-num = "1.0"
+dotenvy = "0.15"
+embedded-graphics = "0.7"
+env_logger = "0.10"
+error-stack = "0.3"
+ssd1306 = "0.7"
+sgp40 = "0.0.4"
+rppal = { version = "0.13", features = ["hal"] }
+rppal-dht11 = "0.4"
+linux-embedded-hal = "0.3"
+local-ip-address = "0.5"
+log = "0.4"
+serde = { version = "1.0", features = ["derive"] }
+tokio = { version = "1.26", features = ["macros", "rt", "rt-multi-thread"] }
