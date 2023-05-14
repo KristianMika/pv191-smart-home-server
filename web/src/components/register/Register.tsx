@@ -1,7 +1,9 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { isJwtSet } from "../../auth";
 import { emptyFormData, RegisterFormData } from "../../models/registerFormData";
 
 const MIN_FIRST_NAME_LENGTH = 1;
@@ -12,6 +14,14 @@ const MIN_PASSWORD_LENGTH = 8;
 const MAX_PASSWORD_LENGTH = 100;
 
 export const Register: React.FC = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isJwtSet()) {
+      navigate("/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (formData.password !== formData.passwordAgain) {
@@ -28,6 +38,7 @@ export const Register: React.FC = () => {
         .then(() => {
           setFormData(emptyFormData);
           resolve();
+          navigate("/");
         })
         .catch((error) => {
           reject(error.response?.data?.message);
