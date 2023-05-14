@@ -11,6 +11,8 @@ mod state;
 
 use crate::auth::User;
 use crate::display_printer::DisplayPrinter;
+use crate::endpoints::auth::{ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME};
+use crate::endpoints::logout::post_logout;
 use crate::endpoints::{
     current_measurement::get_current_measurement, login::post_login,
     past_measurements::get_past_measurements, register::post_register,
@@ -82,6 +84,8 @@ async fn main() -> io::Result<()> {
             .refresh_authorizer(|| async move { Ok(()) })
             .token_signer(Some(
                 TokenSigner::new()
+                    .access_token_name(ACCESS_TOKEN_COOKIE_NAME)
+                    .refresh_token_name(REFRESH_TOKEN_COOKIE_NAME)
                     .signing_key(key_pair.sk.clone())
                     .algorithm(Ed25519)
                     .build()
@@ -96,6 +100,7 @@ async fn main() -> io::Result<()> {
             .wrap(Cors::permissive())
             .service(post_register)
             .service(post_login)
+            .service(post_logout)
             .use_jwt(
                 authority,
                 web::scope("/api")
@@ -103,6 +108,7 @@ async fn main() -> io::Result<()> {
                     .service(get_current_measurement),
             )
             .service(actix_files::Files::new("/login", WEB_FILES_PATH).index_file(INDEX_FILE))
+            .service(actix_files::Files::new("/logout", WEB_FILES_PATH).index_file(INDEX_FILE))
             .service(actix_files::Files::new("/register", WEB_FILES_PATH).index_file(INDEX_FILE))
             .service(actix_files::Files::new("/", WEB_FILES_PATH).index_file(INDEX_FILE))
     })
