@@ -59,7 +59,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: smart-server
-          path: backend/target/aarch64-unknown-linux-gnu/release/
+          path: |
+            backend/target/aarch64-unknown-linux-gnu/release/server
+            backend/target/aarch64-unknown-linux-gnu/release/sensor-controller
           if-no-files-found: error
 
   debian-build-publish:
