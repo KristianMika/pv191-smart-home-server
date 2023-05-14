@@ -21,8 +21,8 @@ export const Login: React.FC = () => {
     const submitRegistration = new Promise<void>((resolve, reject) =>
       axios
         .post("/login", {
-          login: formData.login,
-          password: formData.password,
+          login: formData.login.trim(),
+          password: formData.password.trim(),
         })
         .then(() => {
           setFormData(emptyFormData);
