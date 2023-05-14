@@ -27,6 +27,7 @@
 
 .home__current_measurement_table {
   text-align: center;
+  margin-top: 5rem;
 }
 
 .measurement_element__image {
@@ -124,6 +125,10 @@
   text-align: center;
 }
 
+.main_page__main_heading--left {
+  text-align: left;
+}
+
 @media (max-width: 1001px) {
   .home__dashboard_table {
     flex-direction: column;
@@ -151,5 +156,8 @@
 
   .form__wrapper {
     width: 100%;
+  }
+  .main_page__main_heading--left {
+    text-align: center;
   }
 }
