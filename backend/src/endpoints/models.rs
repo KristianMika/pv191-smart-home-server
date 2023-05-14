@@ -28,6 +28,16 @@ pub(crate) struct Response {
     pub message: String,
 }
 
+#[derive(Serialize)]
+pub(crate) struct UserResponse {
+    pub first_name: String,
+}
+impl UserResponse {
+    pub fn new(first_name: String) -> Self {
+        Self { first_name }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use crate::endpoints::models::RegisterRequest;

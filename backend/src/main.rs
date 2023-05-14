@@ -9,10 +9,11 @@ mod sensors;
 mod server_repo;
 mod state;
 
-use crate::auth::User;
+use crate::auth::UserClaims;
 use crate::display_printer::DisplayPrinter;
 use crate::endpoints::auth::{ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME};
 use crate::endpoints::logout::post_logout;
+use crate::endpoints::user::get_user;
 use crate::endpoints::{
     current_measurement::get_current_measurement, login::post_login,
     past_measurements::get_past_measurements, register::post_register,
@@ -80,7 +81,7 @@ async fn main() -> io::Result<()> {
 
     info!("Starting server on address {}.", LISTENING_ADDRESS);
     HttpServer::new(move || {
-        let authority = Authority::<User, Ed25519, _, _>::new()
+        let authority = Authority::<UserClaims, Ed25519, _, _>::new()
             .refresh_authorizer(|| async move { Ok(()) })
             .token_signer(Some(
                 TokenSigner::new()
@@ -105,7 +106,8 @@ async fn main() -> io::Result<()> {
                 authority,
                 web::scope("/api")
                     .service(get_past_measurements)
-                    .service(get_current_measurement),
+                    .service(get_current_measurement)
+                    .service(get_user),
             )
             .service(actix_files::Files::new("/login", WEB_FILES_PATH).index_file(INDEX_FILE))
             .service(actix_files::Files::new("/logout", WEB_FILES_PATH).index_file(INDEX_FILE))

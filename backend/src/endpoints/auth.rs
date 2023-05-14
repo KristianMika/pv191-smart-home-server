@@ -2,7 +2,7 @@ use actix_jwt_auth_middleware::{AuthError, TokenSigner};
 use actix_web::{cookie::Cookie, web, HttpResponse};
 use jwt_compact::alg::Ed25519;
 
-use crate::auth::User;
+use crate::auth::UserClaims;
 
 pub(crate) const ACCESS_TOKEN_COOKIE_NAME: &str = "access_token";
 pub(crate) const REFRESH_TOKEN_COOKIE_NAME: &str = "refresh_token";
@@ -20,8 +20,8 @@ fn create_jwt_indicator_cookie() -> Cookie<'static> {
 /// Creates a response with access, refresh, and dummy
 /// jwt indicator cookies
 pub(crate) fn create_auth_response(
-    user: User,
-    token_signer: web::Data<TokenSigner<User, Ed25519>>,
+    user: UserClaims,
+    token_signer: web::Data<TokenSigner<UserClaims, Ed25519>>,
 ) -> Result<HttpResponse, AuthError> {
     let mut access_cookie = token_signer.create_access_cookie(&user)?;
     let mut refresh_cookie = token_signer.create_refresh_cookie(&user)?;

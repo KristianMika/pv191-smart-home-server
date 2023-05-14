@@ -1,5 +1,5 @@
 use crate::{
-    auth::User,
+    auth::UserClaims,
     endpoints::{
         auth::create_auth_response,
         models::{RegisterRequest, Response},
@@ -19,7 +19,7 @@ static BCRYPT_COST: u32 = 10;
 pub(crate) async fn post_register(
     request: web::Json<RegisterRequest>,
     state: web::Data<ServerState>,
-    token_signer: web::Data<TokenSigner<User, Ed25519>>,
+    token_signer: web::Data<TokenSigner<UserClaims, Ed25519>>,
 ) -> AuthResult<HttpResponse> {
     if !request.is_valid() {
         return Ok(HttpResponse::BadRequest().json(Response {
@@ -51,5 +51,7 @@ pub(crate) async fn post_register(
             }
         }
     }
-    create_auth_response(User::default(), token_signer)
+    let user = created_user.unwrap();
+
+    create_auth_response(UserClaims::new(user.id as u64), token_signer)
 }

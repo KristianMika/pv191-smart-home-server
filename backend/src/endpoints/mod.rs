@@ -5,3 +5,4 @@ pub(crate) mod logout;
 pub(crate) mod models;
 pub(crate) mod past_measurements;
 pub(crate) mod register;
+pub(crate) mod user;

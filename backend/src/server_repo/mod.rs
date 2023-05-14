@@ -30,6 +30,8 @@ pub trait ServerRepo {
 
     /// Fetches a user record of the user with the specific `login`
     fn get_user(&self, login: &str) -> error_stack::Result<Option<UserStore>, DbError>;
+
+    fn get_user_by_id(&self, id: i32) -> error_stack::Result<Option<UserStore>, DbError>;
 }
 
 #[derive(Debug)]

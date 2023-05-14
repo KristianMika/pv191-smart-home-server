@@ -122,6 +122,21 @@ impl ServerRepo for PostgresServerRepo {
 
         Ok(result)
     }
+    fn get_user_by_id(&self, user_id: i32) -> error_stack::Result<Option<UserStore>, DbError> {
+        use schema::usercontext::dsl::*;
+
+        let result: Option<UserStore> = usercontext
+            .filter(id.eq(user_id))
+            .limit(1)
+            .load::<UserStore>(&mut self.get_connection()?)
+            .into_report()
+            .change_context(DbError::FetchError)
+            .attach_printable(format!("Couldn't get user with id {user_id}"))?
+            .first()
+            .cloned();
+
+        Ok(result)
+    }
 }
 
 impl PostgresServerRepo {

@@ -4,7 +4,7 @@ use jwt_compact::alg::Ed25519;
 use tokio::sync::Mutex;
 
 use crate::{
-    auth::User,
+    auth::UserClaims,
     display_printer::DisplayPrinter,
     sensors::sampler::Sampler,
     server_repo::{postgres_server_repo::PostgresServerRepo, ServerRepo},

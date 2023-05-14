@@ -1,5 +1,5 @@
 use crate::{
-    auth::User,
+    auth::UserClaims,
     endpoints::{
         auth::create_auth_response,
         models::{LoginRequest, Response},
@@ -16,7 +16,7 @@ use log::error;
 pub(crate) async fn post_login(
     login_request: web::Json<LoginRequest>,
     state: web::Data<ServerState>,
-    token_signer: web::Data<TokenSigner<User, Ed25519>>,
+    token_signer: web::Data<TokenSigner<UserClaims, Ed25519>>,
 ) -> AuthResult<HttpResponse> {
     let user = match state.repo.get_user(&login_request.login) {
         Ok(val) => val,
@@ -48,7 +48,7 @@ pub(crate) async fn post_login(
             message: "Invalid username or password".into(),
         }));
     }
-    let user = User::default();
+    let user = UserClaims::new(user.id as u64);
 
     create_auth_response(user, token_signer)
 }
