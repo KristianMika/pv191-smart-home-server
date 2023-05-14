@@ -1,3 +1,4 @@
+pub(crate) mod auth;
 pub(crate) mod current_measurement;
 pub(crate) mod login;
 pub(crate) mod models;
