@@ -1,5 +1,5 @@
 [Unit]
-Description=A smart home server that measures info about the environment
+Description=The sampling part of the smart home server that measures info about the environment
 
 [Service]
 StandardOutput=journal
@@ -14,7 +14,7 @@ Group=nogroup
 
 Type=simple
 WorkingDirectory=/var/www/pv191-smart-home-server/
-ExecStart= /usr/bin/pv191-smart-home-server
+ExecStart= /usr/bin/sensor-controller
 
 [Install]
 WantedBy=multi-user.target

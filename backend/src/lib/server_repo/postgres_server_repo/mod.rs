@@ -14,7 +14,7 @@ use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use error_stack::{IntoReport, Report, ResultExt};
 use std::sync::Arc;
 
-pub(crate) mod models;
+pub mod models;
 pub(crate) mod schema;
 
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;

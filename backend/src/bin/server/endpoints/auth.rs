@@ -2,7 +2,7 @@ use actix_jwt_auth_middleware::{AuthError, TokenSigner};
 use actix_web::{cookie::Cookie, web, HttpResponse};
 use jwt_compact::alg::Ed25519;
 
-use crate::auth::UserClaims;
+use crate::models::UserClaims;
 
 pub(crate) const ACCESS_TOKEN_COOKIE_NAME: &str = "access_token";
 pub(crate) const REFRESH_TOKEN_COOKIE_NAME: &str = "refresh_token";

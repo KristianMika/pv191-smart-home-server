@@ -1,7 +1,9 @@
-use crate::{models::MeasurementResponse, server_repo::ServerRepo, state::ServerState};
 use actix_web::{get, web, HttpResponse, Responder};
 use chrono::{Duration, Local};
+use common::server_repo::ServerRepo;
 use log::error;
+
+use crate::{models::MeasurementResponse, state::ServerState};
 
 /// Sends history measurements within the last 24 hours
 #[get("/past_measurements")]

@@ -1,6 +1,6 @@
 use super::models::HumidityTemperatureMeasurement;
 use super::SensorError;
-use crate::server_repo::postgres_server_repo::models::NewMeasurementStore;
+use common::server_repo::postgres_server_repo::models::NewMeasurementStore;
 use error_stack::{IntoReport, Report, Result, ResultExt};
 use linux_embedded_hal::I2cdev;
 use log::error;

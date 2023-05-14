@@ -2,7 +2,7 @@ use self::postgres_server_repo::models::{MeasurementStore, NewMeasurementStore, 
 use chrono::{DateTime, Local};
 use std::{error::Error, fmt};
 
-pub(crate) mod postgres_server_repo;
+pub mod postgres_server_repo;
 
 /// Repository trait for database backends
 pub trait ServerRepo {

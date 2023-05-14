@@ -1,14 +1,14 @@
 use crate::{
-    auth::UserClaims,
     endpoints::{
         auth::create_auth_response,
         models::{LoginRequest, Response},
     },
-    server_repo::ServerRepo,
+    models::UserClaims,
     state::ServerState,
 };
 use actix_jwt_auth_middleware::{AuthResult, TokenSigner};
 use actix_web::{post, web, HttpResponse};
+use common::server_repo::ServerRepo;
 use jwt_compact::alg::Ed25519;
 use log::error;
 

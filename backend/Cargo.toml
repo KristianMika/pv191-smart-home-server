@@ -5,6 +5,18 @@ edition = "2021"
 license = "MIT"
 description = "A smart home server that measures info about the environment"
 
+[lib]
+name = "common"
+path = "src/lib/lib.rs"
+
+[[bin]]
+name = "server"
+path = "src/bin/server/main.rs"
+
+[[bin]]
+name = "sensor-controller"
+path = "src/bin/sensor-controller/main.rs"
+
 [dependencies]
 actix-cors = "0.6.4"
 actix-files = "0.6"
@@ -43,7 +55,12 @@ priority = "optional"
 depends = "libpq-dev"
 assets = [
     [
-        "./target/aarch64-unknown-linux-gnu/release/pv191-smart-home-server",
+        "./target/aarch64-unknown-linux-gnu/release/server",
+        "/usr/bin/",
+        "755",
+    ],
+    [
+        "./target/aarch64-unknown-linux-gnu/release/sensor-controller",
         "/usr/bin/",
         "755",
     ],
@@ -53,6 +70,8 @@ assets = [
         "644",
     ],
 ]
-
-[package.metadata.deb.systemd-units]
-unit-scripts = "../debian"
+maintainer-scripts = "../debian"
+systemd-units = [
+    { unit-name = "smart-home-controller" },
+    { unit-name = "smart-home-server" },
+]

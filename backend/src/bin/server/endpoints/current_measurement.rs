@@ -1,6 +1,8 @@
-use crate::{models::MeasurementResponse, server_repo::ServerRepo, state::ServerState};
 use actix_web::{get, web, HttpResponse, Responder};
+use common::server_repo::ServerRepo;
 use log::error;
+
+use crate::{models::MeasurementResponse, state::ServerState};
 
 /// Sends the currently measured values of all sensors
 #[get("/measurement")]

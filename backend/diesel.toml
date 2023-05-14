@@ -2,7 +2,7 @@
 # see https://diesel.rs/guides/configuring-diesel-cli
 
 [print_schema]
-file = "src/server_repo/postgres_server_repo/schema.rs"
+file = "src/lib/server_repo/postgres_server_repo/schema.rs"
 import_types = ["diesel::sql_types::*"]
 
 [migrations_directory]

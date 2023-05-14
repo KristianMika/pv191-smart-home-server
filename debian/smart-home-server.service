@@ -1,0 +1,20 @@
+[Unit]
+Description=The server part of the smart home server that measures info about the environment
+
+[Service]
+StandardOutput=journal
+StandardError=journal
+# change DATABASE_URL to the correct url
+Environment="DATABASE_URL=postgres://postgres:mysecretpassword@localhost/pv191"
+Restart=on-failure
+RestartSec=5s
+
+User=nobody
+Group=nogroup
+
+Type=simple
+WorkingDirectory=/var/www/pv191-smart-home-server/
+ExecStart= /usr/bin/server
+
+[Install]
+WantedBy=multi-user.target

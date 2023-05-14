@@ -1,15 +1,15 @@
 use crate::{
-    auth::UserClaims,
     endpoints::{
         auth::create_auth_response,
         models::{RegisterRequest, Response},
     },
-    server_repo::{DbError, ServerRepo},
+    models::UserClaims,
     state::ServerState,
 };
 use actix_jwt_auth_middleware::{AuthResult, TokenSigner};
 use actix_web::{post, web, HttpResponse};
 use bcrypt::hash;
+use common::server_repo::{DbError, ServerRepo};
 use jwt_compact::alg::Ed25519;
 use log::error;
 

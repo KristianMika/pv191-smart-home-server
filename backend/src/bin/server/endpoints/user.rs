@@ -1,7 +1,6 @@
-use crate::{
-    auth::UserClaims, endpoints::models::UserResponse, server_repo::ServerRepo, state::ServerState,
-};
+use crate::{endpoints::models::UserResponse, models::UserClaims, state::ServerState};
 use actix_web::{get, web, HttpResponse};
+use common::server_repo::ServerRepo;
 use log::error;
 
 #[get("/user")]
