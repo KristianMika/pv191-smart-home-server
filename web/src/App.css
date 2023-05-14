@@ -106,6 +106,18 @@
   height: 80%;
   margin: auto;
 }
+
+.navbar__button,
+.navbar__button:hover,
+.navbar__button:focus {
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.navbar__button:hover {
+  color: rgba(0, 0, 0, 0.7);
+}
+
 @media (max-width: 1001px) {
   .home__dashboard_table {
     flex-direction: column;

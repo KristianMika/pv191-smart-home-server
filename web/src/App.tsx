@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "./App.css";
 import { PrivateRoute } from "./components/common/PrivateRoute";
@@ -15,25 +15,38 @@ function App() {
     Notification.requestPermission();
   }, []);
 
+  const NavbarWrapper: React.FC = () => {
+    return (
+      <>
+        <PageNavbar />
+        <Outlet />
+      </>
+    );
+  };
   const router = createBrowserRouter([
     {
       path: "/",
-      element: (
-        <PrivateRoute>
-          <Refreshing interval={REFRESH_INTERVAL_MS}>
-            <Home />
-          </Refreshing>
-        </PrivateRoute>
-      ),
+      element: <NavbarWrapper />,
+      children: [
+        {
+          path: "/",
+          element: (
+            <PrivateRoute>
+              <Refreshing interval={REFRESH_INTERVAL_MS}>
+                <Home />
+              </Refreshing>
+            </PrivateRoute>
+          ),
+        },
+        { path: "/register", element: <Register /> },
+        { path: "/login", element: <Login /> },
+      ],
     },
-    { path: "/register", element: <Register /> },
-    { path: "/login", element: <Login /> },
   ]);
   return (
     <div className="App">
-      <PageNavbar />
       <ToastContainer />
-      <RouterProvider router={router} />
+      <RouterProvider router={router}></RouterProvider>
     </div>
   );
 }
