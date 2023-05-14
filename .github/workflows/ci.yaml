@@ -10,7 +10,6 @@ jobs:
       run:
         working-directory: web/
     steps:
-
       - uses: actions/checkout@v3
 
       - name: Install dependencies
@@ -56,11 +55,11 @@ jobs:
       - name: Production build
         run: cross build --target aarch64-unknown-linux-gnu --release
 
-      - name: Upload binary
+      - name: Upload binaries
         uses: actions/upload-artifact@v3
         with:
           name: smart-server
-          path: backend/target/aarch64-unknown-linux-gnu/release/pv191-smart-home-server
+          path: backend/target/aarch64-unknown-linux-gnu/release/
           if-no-files-found: error
 
   debian-build-publish:
@@ -82,7 +81,7 @@ jobs:
       - name: Install cargo-deb
         run: rustup update && cargo install cargo-deb
 
-      - name: Download backend binary
+      - name: Download backend binaries
         uses: actions/download-artifact@v3
         with:
           name: smart-server
@@ -95,7 +94,7 @@ jobs:
           path: web_files/
 
       - name: Create a Debian package
-        run: cargo deb --no-build --target=aarch64-unknown-linux-gnu
+        run: cargo deb --no-build --target=aarch64-unknown-linux-gnu --manifest-path=./server/Cargo.toml
 
       - name: Upload the Debian Package
         uses: actions/upload-artifact@v3
@@ -103,4 +102,3 @@ jobs:
           name: smart-server-deb-package
           path: backend/target/aarch64-unknown-linux-gnu/debian/pv191-smart-home-server_*.deb
           if-no-files-found: error
-
