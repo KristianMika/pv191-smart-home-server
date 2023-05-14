@@ -13,7 +13,7 @@ User=nobody
 Group=nogroup
 
 Type=simple
-WorkingDirectory=/var/www/pv191-smart-home-server/
+WorkingDirectory=/var/www/smart-home-server/
 ExecStart= /usr/bin/sensor-controller
 
 [Install]

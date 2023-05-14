@@ -24,7 +24,7 @@ mod request_validator;
 mod state;
 // TODO: use clap
 static LISTENING_ADDRESS: &str = "0.0.0.0:8080";
-static WEB_FILES_PATH: &str = "/var/www/pv191-smart-home-server/";
+static WEB_FILES_PATH: &str = "/var/www/smart-home-server/";
 static INDEX_FILE: &str = "index.html";
 const DATABASE_URL_ENV: &str = "DATABASE_URL";
 

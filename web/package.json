@@ -1,5 +1,5 @@
 {
-  "name": "pv191-pi-server-web",
+  "name": "pi-server-web",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

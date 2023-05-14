@@ -25,7 +25,7 @@ serde = { version = "1.0", features = ["derive"] }
 
 
 [package.metadata.deb]
-name = "pv191-smart-home-server"
+name = "smart-home-server"
 maintainer = "Kristian Mika <kristian.mika@protonmail.com>"
 copyright = "2023, Kristian Mika <kristian.mika@protonmail.com>"
 license-file = ["../../LICENSE.md", "0"]
@@ -45,7 +45,7 @@ assets = [
     ],
     [
         "../../web_files/**/*",
-        "/var/www/pv191-smart-home-server/",
+        "/var/www/smart-home-server/",
         "644",
     ],
 ]

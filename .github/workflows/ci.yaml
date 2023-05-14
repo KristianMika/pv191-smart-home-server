@@ -102,5 +102,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: smart-server-deb-package
-          path: backend/target/aarch64-unknown-linux-gnu/debian/pv191-smart-home-server_*.deb
+          path: backend/target/aarch64-unknown-linux-gnu/debian/smart-home-server_*.deb
           if-no-files-found: error
