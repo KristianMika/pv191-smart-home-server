@@ -1,9 +1,20 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { emptyFormData, ILoginFormData } from "../../models/loginFormData";
+import { useNavigate } from "react-router-dom";
+import { isJwtSet } from "../../auth";
 
 export const Login: React.FC = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isJwtSet()) {
+      navigate("/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [formData, setFormData] = useState<ILoginFormData>(emptyFormData);
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -16,6 +27,7 @@ export const Login: React.FC = () => {
         .then(() => {
           setFormData(emptyFormData);
           resolve();
+          navigate("/");
         })
         .catch((error) => {
           reject(error.response?.data?.message);

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "./App.css";
+import { PrivateRoute } from "./components/common/PrivateRoute";
 import { Refreshing } from "./components/common/Refreshing";
 import { Home } from "./components/Home/Home";
 import { Login } from "./components/login/Login";
@@ -18,9 +19,11 @@ function App() {
     {
       path: "/",
       element: (
-        <Refreshing interval={REFRESH_INTERVAL_MS}>
-          <Home />
-        </Refreshing>
+        <PrivateRoute>
+          <Refreshing interval={REFRESH_INTERVAL_MS}>
+            <Home />
+          </Refreshing>
+        </PrivateRoute>
       ),
     },
     { path: "/register", element: <Register /> },
