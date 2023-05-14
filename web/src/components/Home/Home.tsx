@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { IUser } from "../../models/IUser";
 import { Measurement, MeasurementType } from "../../models/measurement";
 import { IMeasurementResponse } from "../../models/measurementResponse";
 import { CurrentMeasurementTable } from "./CurrentMeasurements/CurrentMeasurementTable";
@@ -27,7 +28,7 @@ export const Home: React.FC = () => {
       generateHIghVocNotification(vocIndex);
     }
   };
-  const username = "Andy"; //TODO: load from JWT
+  const [user, setUser] = useState<IUser>({ first_name: "" });
   const [multiMeasurement, setMultiMeasurement] = useState<Measurement[]>([]);
   const [measurementTime, setMeasurementTime] = useState<Date>();
   const [lastNotificationTime, setLastNotificationTime] = useState<number>(
@@ -48,9 +49,18 @@ export const Home: React.FC = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    axios.get("/api/user").then((response) => {
+      const data: IUser = response.data as IUser;
+      setUser(data);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="home_page main_page">
-      <h2 className="main_page__main_heading">Hi, {username}!</h2>
+      <h2 className="main_page__main_heading">Welcome, {user.first_name}!</h2>
       <CurrentMeasurementTable measurements={multiMeasurement} />
       <MeasurementHistory />
       <MeasurementTime measurementTime={measurementTime} />
