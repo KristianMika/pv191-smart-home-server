@@ -9,11 +9,13 @@ use embedded_graphics::{
 use error_stack::{IntoReport, Report, ResultExt};
 use hal::I2cdev;
 use local_ip_address::local_ip;
+use mockall::automock;
 use ssd1306::{mode::BufferedGraphicsMode, prelude::*, I2CDisplayInterface, Ssd1306};
 use std::{error::Error, fmt};
 
 use crate::sensors::{error::SensorError, models::MeasurementData};
 
+#[automock]
 pub trait DisplayPrinter {
     fn print_measurement(
         &mut self,

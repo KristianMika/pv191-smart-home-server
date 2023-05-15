@@ -17,7 +17,7 @@ pub struct MeasurementStore {
     pub measurement_time: DateTime<Local>,
 }
 
-#[derive(Insertable, Clone)]
+#[derive(Insertable, Clone, Copy)]
 #[diesel(table_name = measurement)]
 pub struct NewMeasurementStore {
     /// Temperature in °C

@@ -20,5 +20,6 @@ rppal-dht11 = "0.4"
 linux-embedded-hal = "0.3"
 local-ip-address = "0.5"
 log = "0.4"
+mockall = "0.11"
 serde = { version = "1.0", features = ["derive"] }
 tokio = { version = "1.26", features = ["macros", "rt", "rt-multi-thread"] }

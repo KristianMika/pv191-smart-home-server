@@ -32,7 +32,7 @@ async fn main() -> io::Result<()> {
 
     loop {
         interval.tick().await;
-        match on_tick(&repo, &mut sampler, &mut display_printer).await {
+        match on_tick(&repo, &mut sampler, &mut display_printer) {
             Ok(_) => {}
             Err(err) => {
                 log::error!("{:?}", err)
@@ -46,7 +46,7 @@ async fn main() -> io::Result<()> {
 /// 1. Sample new values
 /// 2. Store values into DB
 /// 3. Update display printer
-async fn on_tick(
+fn on_tick(
     repo: &impl ServerRepo,
     sampler: &mut impl SensorSampler,
     display_printer: &mut impl DisplayPrinter,
@@ -55,7 +55,7 @@ async fn on_tick(
         .perfom_measurement()
         .change_context(ControllerError)
         .attach_printable("Couldn't perform measurement")?;
-    repo.store_measurement(sample.clone())
+    repo.store_measurement(sample)
         .change_context(ControllerError)
         .attach_printable("Couldn't store measurement")?;
     display_printer
@@ -64,4 +64,55 @@ async fn on_tick(
         .attach_printable("Coudln't print measurement")?;
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use common::server_repo::{postgres_server_repo::models::NewMeasurementStore, MockServerRepo};
+    use mockall::Sequence;
+
+    use crate::{
+        display_printer::MockDisplayPrinter, error::ControllerError, on_tick,
+        sensors::sampler::MockSensorSampler,
+    };
+
+    #[test]
+    fn given_sampler_returns_measurements_measurement_is_stored_and_printed(
+    ) -> error_stack::Result<(), ControllerError> {
+        let mut seq = Sequence::new();
+
+        let mut mock_sensor_sampler = MockSensorSampler::new();
+        let mut mock_repo = MockServerRepo::new();
+        let mut mock_display_printer = MockDisplayPrinter::new();
+
+        let mocked_measurement = NewMeasurementStore {
+            temperature: Some(16.8),
+            humidity: Some(58),
+            voc_index: None,
+            measurement_time: None,
+        };
+        mock_sensor_sampler
+            .expect_perfom_measurement()
+            .once()
+            .in_sequence(&mut seq)
+            .returning(move || Ok(mocked_measurement));
+
+        mock_repo
+            .expect_store_measurement()
+            .once()
+            .in_sequence(&mut seq)
+            .returning(move |_| Ok(()));
+
+        mock_display_printer
+            .expect_print_measurement()
+            .once()
+            .in_sequence(&mut seq)
+            .returning(move |_| Ok(()));
+
+        on_tick(
+            &mock_repo,
+            &mut mock_sensor_sampler,
+            &mut mock_display_printer,
+        )
+    }
 }

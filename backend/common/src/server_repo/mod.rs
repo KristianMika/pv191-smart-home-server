@@ -1,10 +1,12 @@
 use self::postgres_server_repo::models::{MeasurementStore, NewMeasurementStore, UserStore};
 use chrono::{DateTime, Local};
+use mockall::automock;
 use std::{error::Error, fmt};
 
 pub mod postgres_server_repo;
 
 /// Repository trait for database backends
+#[automock]
 pub trait ServerRepo {
     /// Stores the latest measurement
     fn store_measurement(

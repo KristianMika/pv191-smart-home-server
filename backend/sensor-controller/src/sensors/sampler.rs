@@ -2,6 +2,7 @@ use common::server_repo::postgres_server_repo::models::NewMeasurementStore;
 use error_stack::{IntoReport, Report, Result, ResultExt};
 use linux_embedded_hal::I2cdev;
 use log::error;
+use mockall::automock;
 use rppal::gpio::{Gpio, Mode};
 use rppal::hal::Delay;
 use rppal_dht11::Dht11;
@@ -13,6 +14,7 @@ use super::models::HumidityTemperatureMeasurement;
 const SGP40_I2C_ADDRESS: u8 = 0x59;
 type VocIndex = u16;
 
+#[automock]
 pub trait SensorSampler {
     fn perfom_measurement(&mut self) -> error_stack::Result<NewMeasurementStore, SensorError>;
 }
