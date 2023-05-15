@@ -2,6 +2,7 @@
 name = "sensor-controller"
 version = "0.1.0"
 edition = "2021"
+description = "The service responsible for reading sensors' data and storing it into DB"
 
 
 [dependencies]
