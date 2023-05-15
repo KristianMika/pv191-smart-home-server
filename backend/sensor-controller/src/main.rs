@@ -3,13 +3,15 @@ use cli::Args;
 use common::server_repo::{postgres_server_repo::PostgresServerRepo, ServerRepo};
 use display_printer::DisplayPrinter;
 use dotenvy::dotenv;
+use error::ControllerError;
 use error_stack::ResultExt;
 use sensors::sampler::Sampler;
-use std::{env, error::Error, fmt, io, sync::Arc, time::Duration};
+use std::{env, io, sync::Arc, time::Duration};
 use tokio::{sync::Mutex, time};
 
 mod cli;
 mod display_printer;
+mod error;
 mod sensors;
 
 const DATABASE_URL_ENV: &str = "DATABASE_URL";
@@ -35,7 +37,7 @@ async fn main() -> io::Result<()> {
 
     loop {
         interval.tick().await;
-        match do_tick(&repo, &sampler, &display_printer).await {
+        match on_tick(&repo, &sampler, &display_printer).await {
             Ok(_) => {}
             Err(err) => {
                 log::error!("{:?}", err)
@@ -44,36 +46,31 @@ async fn main() -> io::Result<()> {
     }
 }
 
-async fn do_tick(
+/// Execute tasks at the end of each interval
+///
+/// 1. Sample new values
+/// 2. Store values into DB
+/// 3. Update display printer
+async fn on_tick(
     repo: &Arc<PostgresServerRepo>,
     sampler: &Arc<Mutex<Sampler>>,
     display_printer: &Arc<Mutex<DisplayPrinter>>,
-) -> error_stack::Result<(), ServerError> {
+) -> error_stack::Result<(), ControllerError> {
     let sample = sampler
         .lock()
         .await
         .perfom_measurement()
-        .change_context(ServerError)
+        .change_context(ControllerError)
         .attach_printable("Couldn't perform measurement")?;
     repo.store_measurement(sample.clone())
-        .change_context(ServerError)
+        .change_context(ControllerError)
         .attach_printable("Couldn't store measurement")?;
     display_printer
         .lock()
         .await
         .print_measurement(sample.into())
-        .change_context(ServerError)
+        .change_context(ControllerError)
         .attach_printable("Coudln't print measurement")?;
 
     Ok(())
-}
-
-#[derive(Debug)]
-pub struct ServerError;
-
-impl Error for ServerError {}
-impl fmt::Display for ServerError {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt.write_str("Server error ocurred")
-    }
 }

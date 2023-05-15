@@ -1,6 +1,6 @@
 extern crate linux_embedded_hal as hal;
 
-use crate::sensors::{models::MeasurementData, SensorError};
+use crate::sensors::{error::SensorError, models::MeasurementData};
 use embedded_graphics::{
     mono_font::{ascii::FONT_8X13, MonoTextStyle, MonoTextStyleBuilder},
     pixelcolor::BinaryColor,
