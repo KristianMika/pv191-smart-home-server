@@ -14,7 +14,14 @@ use std::{error::Error, fmt};
 
 use crate::sensors::{error::SensorError, models::MeasurementData};
 
-pub struct DisplayPrinter {
+pub trait DisplayPrinter {
+    fn print_measurement(
+        &mut self,
+        measurement: MeasurementData,
+    ) -> error_stack::Result<(), DisplayPrinterError>;
+}
+
+pub struct Ssd1306Printer {
     display: Ssd1306<
         I2CInterface<I2cdev>,
         ssd1306::prelude::DisplaySize128x64,
@@ -35,7 +42,7 @@ pub fn get_voc_evaluation(voc: u32) -> error_stack::Result<String, SensorError> 
     })
 }
 
-impl DisplayPrinter {
+impl Ssd1306Printer {
     pub fn new(i2c_dev: &str) -> error_stack::Result<Self, DisplayPrinterError> {
         let i2c = I2cdev::new(i2c_dev)
             .into_report()
@@ -90,19 +97,6 @@ impl DisplayPrinter {
     pub fn reset_position(&mut self) {
         self.xpos = 0;
         self.ypos = 0;
-    }
-
-    pub fn print_measurement(
-        &mut self,
-        measurement: MeasurementData,
-    ) -> error_stack::Result<(), DisplayPrinterError> {
-        let text_style = Self::get_default_text_style();
-        self.clear_display()?;
-
-        self.print_voc(measurement.voc_index, text_style)?;
-        self.print_temperature(measurement.temperature, text_style)?;
-        self.print_humidity(measurement.humidity, text_style)?;
-        self.print_ip(text_style)
     }
 
     pub fn clear_display(&mut self) -> error_stack::Result<(), DisplayPrinterError> {
@@ -179,6 +173,20 @@ impl DisplayPrinter {
     }
 }
 
+impl DisplayPrinter for Ssd1306Printer {
+    fn print_measurement(
+        &mut self,
+        measurement: MeasurementData,
+    ) -> error_stack::Result<(), DisplayPrinterError> {
+        let text_style = Self::get_default_text_style();
+        self.clear_display()?;
+
+        self.print_voc(measurement.voc_index, text_style)?;
+        self.print_temperature(measurement.temperature, text_style)?;
+        self.print_humidity(measurement.humidity, text_style)?;
+        self.print_ip(text_style)
+    }
+}
 #[derive(Debug)]
 pub struct DisplayPrinterError;
 

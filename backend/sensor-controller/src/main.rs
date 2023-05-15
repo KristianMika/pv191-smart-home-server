@@ -6,11 +6,11 @@ mod sensors;
 use clap::Parser;
 use cli::Args;
 use common::server_repo::{postgres_server_repo::PostgresServerRepo, ServerRepo};
-use display_printer::DisplayPrinter;
+use display_printer::{DisplayPrinter, Ssd1306Printer};
 use dotenvy::dotenv;
 use error::ControllerError;
 use error_stack::ResultExt;
-use sensors::sampler::Sampler;
+use sensors::sampler::{AirSensorSampler, SensorSampler};
 use std::{env, io, time::Duration};
 use tokio::time;
 
@@ -26,8 +26,8 @@ async fn main() -> io::Result<()> {
         env::var(DATABASE_URL_ENV).unwrap_or_else(|_| panic!("{} must be set", DATABASE_URL_ENV));
 
     let repo = PostgresServerRepo::from_url(&db_url).unwrap();
-    let mut sampler = Sampler::new(args.get_dht11_pin(), args.get_voc_i2c_dev()).unwrap();
-    let mut display_printer = DisplayPrinter::new(args.get_display_i2c_dev()).unwrap();
+    let mut sampler = AirSensorSampler::new(args.get_dht11_pin(), args.get_voc_i2c_dev()).unwrap();
+    let mut display_printer = Ssd1306Printer::new(args.get_display_i2c_dev()).unwrap();
     let mut interval = time::interval(Duration::from_secs(args.get_periodic_sampling_seconds()));
 
     loop {
@@ -47,9 +47,9 @@ async fn main() -> io::Result<()> {
 /// 2. Store values into DB
 /// 3. Update display printer
 async fn on_tick(
-    repo: &PostgresServerRepo,
-    sampler: &mut Sampler,
-    display_printer: &mut DisplayPrinter,
+    repo: &impl ServerRepo,
+    sampler: &mut impl SensorSampler,
+    display_printer: &mut impl DisplayPrinter,
 ) -> error_stack::Result<(), ControllerError> {
     let sample = sampler
         .perfom_measurement()

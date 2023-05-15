@@ -13,15 +13,18 @@ use super::models::HumidityTemperatureMeasurement;
 const SGP40_I2C_ADDRESS: u8 = 0x59;
 type VocIndex = u16;
 
+pub trait SensorSampler {
+    fn perfom_measurement(&mut self) -> error_stack::Result<NewMeasurementStore, SensorError>;
+}
 /// Can execute measurements using connected sensors
-pub struct Sampler {
+pub struct AirSensorSampler {
     /// DHT11 sensor for humidity and temperature
     dht11: Dht11,
     /// Sgp40 sensor for VOC index
     sgp40: Sgp40<I2cdev, Delay>,
 }
 
-impl Sampler {
+impl AirSensorSampler {
     /// Creates a new instances of `Self`
     pub fn new(dht11_pin: u8, voc_i2c_dev: &str) -> Result<Self, SensorError> {
         let sampler = Self {
@@ -76,8 +79,10 @@ impl Sampler {
                 .attach_printable(format!("Couldn't perform VOC measurement: {:?}", err))
         })
     }
+}
 
-    pub fn perfom_measurement(&mut self) -> error_stack::Result<NewMeasurementStore, SensorError> {
+impl SensorSampler for AirSensorSampler {
+    fn perfom_measurement(&mut self) -> error_stack::Result<NewMeasurementStore, SensorError> {
         let mut temperature = None;
         let mut humidity = None;
         let mut voc_index = None;
