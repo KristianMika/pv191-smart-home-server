@@ -1,5 +1,6 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { IUser } from "../../models/IUser";
 import { Measurement, MeasurementType } from "../../models/measurement";
 import { IMeasurementResponse } from "../../models/measurementResponse";
@@ -34,27 +35,53 @@ export const Home: React.FC = () => {
   const [lastNotificationTime, setLastNotificationTime] = useState<number>(
     Date.now()
   );
-  useEffect(() => {
-    axios.get("/api/measurement").then((response) => {
-      const data: IMeasurementResponse = response.data as IMeasurementResponse;
 
-      const measurements: Measurement[] = [
-        { type: MeasurementType.Temperature, value: data.temperature },
-        { type: MeasurementType.Humidity, value: data.humidity },
-        { type: MeasurementType.Voc, value: data.voc_index },
-      ];
-      checkVoc(data.voc_index);
-      setMeasurementTime(new Date(data.measurement_time));
-      setMultiMeasurement(measurements);
+  const getMeasurements = async () => {
+    let response;
+    try {
+      response = await axios.get("/api/measurement");
+    } catch (e) {
+      throw new Error("Couldn't fetch measurements from the server");
+    }
+
+    const data: IMeasurementResponse = response.data as IMeasurementResponse;
+
+    const measurements: Measurement[] = [
+      { type: MeasurementType.Temperature, value: data.temperature },
+      { type: MeasurementType.Humidity, value: data.humidity },
+      { type: MeasurementType.Voc, value: data.voc_index },
+    ];
+    checkVoc(data.voc_index);
+    setMeasurementTime(new Date(data.measurement_time));
+    setMultiMeasurement(measurements);
+  };
+
+  // utilize the toaster for popping error messages if the promise fails
+  useEffect(() => {
+    toast.promise(getMeasurements, {
+      error: {
+        render({ data }) {
+          return `${data || "An error occurred"}`;
+        },
+      },
     });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const getUser = async () => {
+    let response;
+    try {
+      response = await axios.get("/api/user");
+    } catch (e) {
+      console.log("Couldn't fetch user");
+      return;
+    }
+    const data: IUser = (response as AxiosResponse).data as IUser;
+    setUser(data);
+  };
   useEffect(() => {
-    axios.get("/api/user").then((response) => {
-      const data: IUser = response.data as IUser;
-      setUser(data);
-    });
+    getUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
