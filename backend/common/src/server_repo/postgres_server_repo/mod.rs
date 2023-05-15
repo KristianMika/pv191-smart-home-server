@@ -1,6 +1,6 @@
-use self::models::{NewMeasurementStore, UserStore};
-use super::{DbError, ServerRepo};
-use crate::server_repo::postgres_server_repo::models::{MeasurementStore, NewUserStore};
+pub mod models;
+pub(crate) mod schema;
+
 use diesel::dsl::sql;
 use diesel::result::DatabaseErrorKind;
 use diesel::result::Error::DatabaseError;
@@ -14,8 +14,9 @@ use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use error_stack::{IntoReport, Report, ResultExt};
 use std::sync::Arc;
 
-pub mod models;
-pub(crate) mod schema;
+use self::models::{NewMeasurementStore, UserStore};
+use super::{DbError, ServerRepo};
+use crate::server_repo::postgres_server_repo::models::{MeasurementStore, NewUserStore};
 
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;
 const MIGRATIONS: EmbeddedMigrations = embed_migrations!();

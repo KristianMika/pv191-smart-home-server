@@ -1,6 +1,5 @@
 extern crate linux_embedded_hal as hal;
 
-use crate::sensors::{error::SensorError, models::MeasurementData};
 use embedded_graphics::{
     mono_font::{ascii::FONT_8X13, MonoTextStyle, MonoTextStyleBuilder},
     pixelcolor::BinaryColor,
@@ -12,6 +11,8 @@ use hal::I2cdev;
 use local_ip_address::local_ip;
 use ssd1306::{mode::BufferedGraphicsMode, prelude::*, I2CDisplayInterface, Ssd1306};
 use std::{error::Error, fmt};
+
+use crate::sensors::{error::SensorError, models::MeasurementData};
 
 pub struct DisplayPrinter {
     display: Ssd1306<

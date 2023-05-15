@@ -1,3 +1,9 @@
+use actix_jwt_auth_middleware::{AuthResult, TokenSigner};
+use actix_web::{post, web, HttpResponse};
+use common::server_repo::ServerRepo;
+use jwt_compact::alg::Ed25519;
+use log::error;
+
 use crate::{
     endpoints::{
         auth::create_auth_response,
@@ -6,11 +12,6 @@ use crate::{
     models::UserClaims,
     state::ServerState,
 };
-use actix_jwt_auth_middleware::{AuthResult, TokenSigner};
-use actix_web::{post, web, HttpResponse};
-use common::server_repo::ServerRepo;
-use jwt_compact::alg::Ed25519;
-use log::error;
 
 #[post("/login")]
 pub(crate) async fn post_login(

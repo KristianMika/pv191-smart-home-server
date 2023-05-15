@@ -1,5 +1,3 @@
-use super::error::SensorError;
-use super::models::HumidityTemperatureMeasurement;
 use common::server_repo::postgres_server_repo::models::NewMeasurementStore;
 use error_stack::{IntoReport, Report, Result, ResultExt};
 use linux_embedded_hal::I2cdev;
@@ -8,8 +6,13 @@ use rppal::gpio::{Gpio, Mode};
 use rppal::hal::Delay;
 use rppal_dht11::Dht11;
 use sgp40::Sgp40;
+
+use super::error::SensorError;
+use super::models::HumidityTemperatureMeasurement;
+
 const SGP40_I2C_ADDRESS: u8 = 0x59;
 type VocIndex = u16;
+
 /// Can execute measurements using connected sensors
 pub struct Sampler {
     /// DHT11 sensor for humidity and temperature

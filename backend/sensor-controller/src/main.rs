@@ -1,3 +1,8 @@
+mod cli;
+mod display_printer;
+mod error;
+mod sensors;
+
 use clap::Parser;
 use cli::Args;
 use common::server_repo::{postgres_server_repo::PostgresServerRepo, ServerRepo};
@@ -8,11 +13,6 @@ use error_stack::ResultExt;
 use sensors::sampler::Sampler;
 use std::{env, io, sync::Arc, time::Duration};
 use tokio::{sync::Mutex, time};
-
-mod cli;
-mod display_printer;
-mod error;
-mod sensors;
 
 const DATABASE_URL_ENV: &str = "DATABASE_URL";
 

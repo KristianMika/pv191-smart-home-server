@@ -1,7 +1,8 @@
-use crate::{endpoints::models::UserResponse, models::UserClaims, state::ServerState};
 use actix_web::{get, web, HttpResponse};
 use common::server_repo::ServerRepo;
 use log::error;
+
+use crate::{endpoints::models::UserResponse, models::UserClaims, state::ServerState};
 
 #[get("/user")]
 pub(crate) async fn get_user(

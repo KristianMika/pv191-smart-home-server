@@ -1,3 +1,9 @@
+mod cli;
+mod endpoints;
+mod models;
+mod request_validator;
+mod state;
+
 use actix_cors::Cors;
 use actix_jwt_auth_middleware::use_jwt::UseJWTOnApp;
 use actix_jwt_auth_middleware::{Authority, TokenSigner};
@@ -21,12 +27,6 @@ use crate::endpoints::register::post_register;
 use crate::endpoints::user::get_user;
 use crate::models::UserClaims;
 use crate::state::ServerState;
-
-mod cli;
-mod endpoints;
-mod models;
-mod request_validator;
-mod state;
 
 const DATABASE_URL_ENV: &str = "DATABASE_URL";
 

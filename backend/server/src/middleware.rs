@@ -1,5 +1,6 @@
 use actix_web::{dev::ServiceRequest, HttpResponse, Result};
 use std::net::Ipv4Addr;
+
 // TODO: use with app
 /// Allows only private IPs
 pub(crate) fn local_network_only(req: &ServiceRequest) -> Result<HttpResponse> {

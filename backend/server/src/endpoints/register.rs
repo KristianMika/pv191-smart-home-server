@@ -1,3 +1,10 @@
+use actix_jwt_auth_middleware::{AuthResult, TokenSigner};
+use actix_web::{post, web, HttpResponse};
+use bcrypt::hash;
+use common::server_repo::{DbError, ServerRepo};
+use jwt_compact::alg::Ed25519;
+use log::error;
+
 use crate::{
     endpoints::{
         auth::create_auth_response,
@@ -6,12 +13,6 @@ use crate::{
     models::UserClaims,
     state::ServerState,
 };
-use actix_jwt_auth_middleware::{AuthResult, TokenSigner};
-use actix_web::{post, web, HttpResponse};
-use bcrypt::hash;
-use common::server_repo::{DbError, ServerRepo};
-use jwt_compact::alg::Ed25519;
-use log::error;
 
 static BCRYPT_COST: u32 = 10;
 
