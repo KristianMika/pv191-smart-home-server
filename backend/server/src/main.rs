@@ -3,13 +3,15 @@ use actix_jwt_auth_middleware::use_jwt::UseJWTOnApp;
 use actix_jwt_auth_middleware::{Authority, TokenSigner};
 use actix_web::web::Data;
 use actix_web::{web, App, HttpServer};
+use clap::Parser;
+use cli::Args;
 use common::server_repo::postgres_server_repo::PostgresServerRepo;
 use dotenvy::dotenv;
 use ed25519_compact::KeyPair;
 use jwt_compact::alg::Ed25519;
 use log::info;
 use std::{env, io, sync::Arc};
-mod endpoints;
+
 use crate::endpoints::auth::{ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME};
 use crate::endpoints::current_measurement::get_current_measurement;
 use crate::endpoints::login::post_login;
@@ -19,19 +21,20 @@ use crate::endpoints::register::post_register;
 use crate::endpoints::user::get_user;
 use crate::models::UserClaims;
 use crate::state::ServerState;
+
+mod cli;
+mod endpoints;
 mod models;
 mod request_validator;
 mod state;
-// TODO: use clap
-static LISTENING_ADDRESS: &str = "0.0.0.0:8080";
-static WEB_FILES_PATH: &str = "/var/www/smart-home-server/";
-static INDEX_FILE: &str = "index.html";
+
 const DATABASE_URL_ENV: &str = "DATABASE_URL";
 
 #[actix_web::main]
 async fn main() -> io::Result<()> {
     env_logger::init();
     dotenv().ok();
+    let args = Args::parse();
 
     let db_url =
         env::var(DATABASE_URL_ENV).unwrap_or_else(|_| panic!("{} must be set", DATABASE_URL_ENV));
@@ -44,7 +47,9 @@ async fn main() -> io::Result<()> {
 
     let key_pair = KeyPair::generate();
 
-    info!("Starting server on address {}.", LISTENING_ADDRESS);
+    let args_cloned = args.clone();
+    let listening_address = args_cloned.get_listening_address();
+    info!("Starting server on address {}.", listening_address);
     HttpServer::new(move || {
         let authority = Authority::<UserClaims, Ed25519, _, _>::new()
             .refresh_authorizer(|| async move { Ok(()) })
@@ -74,12 +79,24 @@ async fn main() -> io::Result<()> {
                     .service(get_current_measurement)
                     .service(get_user),
             )
-            .service(actix_files::Files::new("/login", WEB_FILES_PATH).index_file(INDEX_FILE))
-            .service(actix_files::Files::new("/logout", WEB_FILES_PATH).index_file(INDEX_FILE))
-            .service(actix_files::Files::new("/register", WEB_FILES_PATH).index_file(INDEX_FILE))
-            .service(actix_files::Files::new("/", WEB_FILES_PATH).index_file(INDEX_FILE))
+            .service(
+                actix_files::Files::new("/login", args.get_web_files_path())
+                    .index_file(args.get_index_filename()),
+            )
+            .service(
+                actix_files::Files::new("/logout", args.get_web_files_path())
+                    .index_file(args.get_index_filename()),
+            )
+            .service(
+                actix_files::Files::new("/register", args.get_web_files_path())
+                    .index_file(args.get_index_filename()),
+            )
+            .service(
+                actix_files::Files::new("/", args.get_web_files_path())
+                    .index_file(args.get_index_filename()),
+            )
     })
-    .bind(LISTENING_ADDRESS)?
+    .bind(listening_address)?
     .run()
     .await
 }

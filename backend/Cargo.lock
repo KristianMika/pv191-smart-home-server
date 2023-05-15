@@ -2000,6 +2000,7 @@ dependencies = [
  "actix-web",
  "bcrypt",
  "chrono",
+ "clap",
  "common",
  "dotenvy",
  "ed25519-compact",
