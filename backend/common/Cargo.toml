@@ -2,8 +2,7 @@
 name = "common"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "The common part of the smart home server, contains mostly models and DbRepo"
 
 [dependencies]
 diesel = { version = "2.0", features = ["postgres", "r2d2", "chrono"] }
