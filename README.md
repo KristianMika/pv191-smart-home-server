@@ -42,3 +42,14 @@ sudo apt-get install ./<tbd>.deb
 ```
 
 Now navigate to `http://<ip shown on the display>:8080/`
+
+### Architecture
+
+The application consists of 2 services:
+
+1. The _sensor-controller_ service samples sensors in user-specified intervals and stores measurements in the database
+2. The _server_ service serves the UI page and exposes API that, after the user has authenticated, provides measurements from the DB.
+
+<p align="center">
+    <img src="./.github/images/arch.png" alt="Application architecture">
+</p>
