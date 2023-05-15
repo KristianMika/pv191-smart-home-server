@@ -92,6 +92,10 @@ async fn main() -> io::Result<()> {
                     .index_file(args.get_index_filename()),
             )
             .service(
+                actix_files::Files::new("/forbidden", args.get_web_files_path())
+                    .index_file(args.get_index_filename()),
+            )
+            .service(
                 actix_files::Files::new("/", args.get_web_files_path())
                     .index_file(args.get_index_filename()),
             )
