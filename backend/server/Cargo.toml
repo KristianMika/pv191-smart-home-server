@@ -3,10 +3,10 @@ name = "server"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
+# only the server part(!) but as cargo-deb uses this package's metadata for the whole
+# Debian package, this description is generic
 description = "A smart home server that measures info about the environment"
 
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 common = { path = "../common" }
@@ -23,7 +23,7 @@ jwt-compact = { version = "0.7", features = ["ed25519-compact"] }
 log = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 
-
+# cargo-deb requires one project to contain the Debian package metadata
 [package.metadata.deb]
 name = "smart-home-server"
 maintainer = "Kristian Mika <kristian.mika@protonmail.com>"
