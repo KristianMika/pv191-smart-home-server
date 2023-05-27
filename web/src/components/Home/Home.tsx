@@ -1,6 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { isJwtSet } from "../../auth";
 import { IUser } from "../../models/IUser";
 import { Measurement, MeasurementType } from "../../models/measurement";
 import { IMeasurementResponse } from "../../models/measurementResponse";
@@ -19,6 +21,15 @@ const generateHIghVocNotification = (vocIndex: number) => {
 };
 
 export const Home: React.FC = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!isJwtSet()) {
+      toast.warn("Your session has expired. Please, log in.");
+      navigate("/login");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const checkVoc = (vocIndex?: number) => {
     if (
       vocIndex &&
