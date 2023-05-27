@@ -9,6 +9,7 @@ use actix_jwt_auth_middleware::use_jwt::UseJWTOnApp;
 use actix_jwt_auth_middleware::{Authority, TokenSigner};
 use actix_web::web::Data;
 use actix_web::{web, App, HttpServer};
+use chrono::Duration;
 use clap::Parser;
 use cli::Args;
 use common::server_repo::postgres_server_repo::PostgresServerRepo;
@@ -18,7 +19,10 @@ use jwt_compact::alg::Ed25519;
 use log::info;
 use std::{env, io, sync::Arc};
 
-use crate::endpoints::auth::{ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME};
+use crate::endpoints::auth::{
+    ACCESS_TOKEN_COOKIE_NAME, ACCESS_TOKEN_MAX_AGE_MINUTES, REFRESH_TOKEN_COOKIE_NAME,
+    REFRESH_TOKEN_MAX_AGE_DAYS,
+};
 use crate::endpoints::current_measurement::get_current_measurement;
 use crate::endpoints::login::post_login;
 use crate::endpoints::logout::post_logout;
@@ -56,11 +60,13 @@ async fn main() -> io::Result<()> {
             .token_signer(Some(
                 TokenSigner::new()
                     .access_token_name(ACCESS_TOKEN_COOKIE_NAME)
+                    .access_token_lifetime(Duration::minutes(ACCESS_TOKEN_MAX_AGE_MINUTES))
                     .refresh_token_name(REFRESH_TOKEN_COOKIE_NAME)
+                    .refresh_token_lifetime(Duration::days(REFRESH_TOKEN_MAX_AGE_DAYS))
                     .signing_key(key_pair.sk.clone())
                     .algorithm(Ed25519)
                     .build()
-                    .expect(""),
+                    .expect("Couldn't build TokenSigner"),
             ))
             .verifying_key(key_pair.pk)
             .build()

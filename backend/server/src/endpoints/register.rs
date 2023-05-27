@@ -43,7 +43,7 @@ pub(crate) async fn post_register(
         match err.current_context() {
             DbError::ConstraintError => {
                 return Ok(HttpResponse::BadRequest().json(Response {
-                    message: "The username already exist".into(),
+                    message: "The username already exists".into(),
                 }))
             }
             _ => {
