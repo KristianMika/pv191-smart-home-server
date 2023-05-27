@@ -1,6 +1,9 @@
 use actix_jwt_auth_middleware::{AuthError, TokenSigner};
 use actix_web::{
-    cookie::{time::Duration, Cookie},
+    cookie::{
+        time::{Duration, OffsetDateTime},
+        Cookie,
+    },
     web, HttpResponse,
 };
 use jwt_compact::alg::Ed25519;
@@ -15,13 +18,14 @@ pub(crate) const REFRESH_TOKEN_MAX_AGE_DAYS: i64 = 7;
 
 /// Creates a jwt indicator cookie that is not-HttpOnly
 ///
-/// It's main purpose is to indicate to front-end when
+/// Its main purpose is to indicate to front-end when
 /// the user is loged-in, as we can't access httpOnly
 /// cookies from JS
 fn create_jwt_indicator_cookie() -> Cookie<'static> {
-    let mut cookie = Cookie::new(JWT_INDICATOR_COOKIE_NAME, "dummy value");
-    cookie.set_max_age(Duration::days(REFRESH_TOKEN_MAX_AGE_DAYS));
-    cookie
+    let expiration = OffsetDateTime::now_utc() + Duration::days(REFRESH_TOKEN_MAX_AGE_DAYS);
+    Cookie::build(JWT_INDICATOR_COOKIE_NAME, "dummy value")
+        .expires(expiration)
+        .finish()
 }
 
 /// Creates a response with access, refresh, and dummy
