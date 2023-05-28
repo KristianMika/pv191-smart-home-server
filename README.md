@@ -1,7 +1,9 @@
-# PV191 Smart Home Server
+<div align="center">
+<h1> Smart Home Server</h1>
 
 [![CI](https://github.com/KristianMika/pv191-smart-home-server/actions/workflows/ci.yaml/badge.svg)](https://github.com/KristianMika/pv191-smart-home-server/actions/workflows/ci.yaml)
 
+</div>
 PV191 Smart Home Server is a simple server application that measures temperature, humidity, and VOC index. The measured data is displayed using an OLED display. The user can access a WEB UI for more thorough data analysis that is available after she has authenticated using a username and password.
 
 ## Temperature and Humidity
