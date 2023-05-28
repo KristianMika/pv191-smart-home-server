@@ -1,0 +1,5 @@
+[advisories]
+# Potential segfualt in the time crate enforced by multiple crates.
+# Getting rid of the issue would mean getting rid of core crates 
+# that inforce the dependency
+ignore = ["RUSTSEC-2020-0071"]
