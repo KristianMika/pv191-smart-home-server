@@ -43,14 +43,17 @@ jobs:
           target: aarch64-unknown-linux-gnu
           override: true
 
-      - name: Install cross
-        run: cargo install cross
+      - name: Install cargo crates
+        run: cargo install cross cargo-audit
 
       - name: Debug build
         run: cross build --target aarch64-unknown-linux-gnu
 
       - name: Test
         run: cross test --target aarch64-unknown-linux-gnu
+
+      - name: Audit
+        run: cargo audit
 
       - name: Production build
         run: cross build --target aarch64-unknown-linux-gnu --release
