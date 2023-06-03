@@ -19,7 +19,6 @@ export interface IMeasurementChart {
   strokeColor: string;
 }
 export const MeasurementChart: React.FC<IMeasurementChart> = (props) => {
-  const yAxisPadding = 0.5;
   const strokeWidth = 2;
   return (
     <div className="dashboard_table__element">
@@ -45,13 +44,7 @@ export const MeasurementChart: React.FC<IMeasurementChart> = (props) => {
             scale="time"
             tickFormatter={(label: Date) => label.getHours().toString()}
           />
-          <YAxis
-            tickCount={5}
-            domain={[
-              (dataMin: number) => dataMin - yAxisPadding,
-              (dataMax: number) => dataMax + yAxisPadding,
-            ]}
-          />
+          <YAxis tickCount={5} />
           <Line
             type="monotone"
             dataKey={props.measurementKey}
