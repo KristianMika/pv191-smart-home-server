@@ -31,21 +31,21 @@ export const Home: React.FC = () => {
   }, []);
 
   const checkVoc = (vocIndex?: number) => {
+    const lastNotificationTime = parseInt(
+      localStorage.getItem("lastNotificationTime") || ""
+    );
     if (
       vocIndex &&
       vocIndex > VOC_INDEX_NOTIFICATION_THRESHOLD &&
-      lastNotificationTime > Date.now() - TEN_MINUTES
+      (!lastNotificationTime || lastNotificationTime < Date.now() - TEN_MINUTES)
     ) {
-      setLastNotificationTime(Date.now());
+      localStorage.setItem("lastNotificationTime", Date.now().toString());
       generateHIghVocNotification(vocIndex);
     }
   };
   const [user, setUser] = useState<IUser>({ first_name: "" });
   const [multiMeasurement, setMultiMeasurement] = useState<Measurement[]>([]);
   const [measurementTime, setMeasurementTime] = useState<Date>();
-  const [lastNotificationTime, setLastNotificationTime] = useState<number>(
-    Date.now()
-  );
 
   const getMeasurements = async () => {
     let response;
