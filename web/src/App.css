@@ -9,10 +9,16 @@
   --dashboard-tile-colour: var(--coral-blue);
   --background-color: var(--jagged-ice);
 }
+#root,
+body,
+html {
+  height: 100%;
+  width: 100%;
+}
 
 .App {
-  width: 100vw;
-  height: 100vh;
+  height: 100%;
+  width: 100%;
   background: var(--background-color);
   margin: 0;
   padding: 0;
