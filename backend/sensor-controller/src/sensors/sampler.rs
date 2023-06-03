@@ -12,6 +12,9 @@ use super::error::SensorError;
 use super::models::HumidityTemperatureMeasurement;
 
 const SGP40_I2C_ADDRESS: u8 = 0x59;
+const VOC_INIT_REPETITION_COUNT: usize = 50;
+const SGP_MIN_INITIALIZED_VALUE: u16 = 5;
+
 type VocIndex = u16;
 
 #[automock]
@@ -99,10 +102,18 @@ impl SensorSampler for AirSensorSampler {
             }
         };
 
-        match self.measure_voc_index() {
-            Ok(sample) => voc_index = Some(sample),
-            Err(err) => error!("{:?}", err),
-        };
+        // SGP40 may need a few more reads to init the algorithm
+        for _ in 0..VOC_INIT_REPETITION_COUNT {
+            match self.measure_voc_index() {
+                Ok(sample) => {
+                    voc_index = Some(sample);
+                    if sample >= SGP_MIN_INITIALIZED_VALUE {
+                        break;
+                    }
+                }
+                Err(err) => error!("{:?}", err),
+            };
+        }
 
         Ok(NewMeasurementStore {
             temperature,
