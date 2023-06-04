@@ -3,6 +3,7 @@ mod display_printer;
 mod error;
 mod sensors;
 
+use chrono::{Duration, Local};
 use clap::Parser;
 use cli::Args;
 use common::server_repo::{postgres_server_repo::PostgresServerRepo, ServerRepo};
@@ -11,7 +12,7 @@ use dotenvy::dotenv;
 use error::ControllerError;
 use error_stack::ResultExt;
 use sensors::sampler::{AirSensorSampler, SensorSampler};
-use std::{env, io, time::Duration};
+use std::{env, io, time::Duration as StdDuration};
 use tokio::time;
 
 const DATABASE_URL_ENV: &str = "DATABASE_URL";
@@ -28,9 +29,12 @@ async fn main() -> io::Result<()> {
     let repo = PostgresServerRepo::from_url(&db_url).unwrap();
     let mut sampler = AirSensorSampler::new(args.get_dht11_pin(), args.get_voc_i2c_dev()).unwrap();
     let mut display_printer = Ssd1306Printer::new(args.get_display_i2c_dev()).unwrap();
-    let mut interval = time::interval(Duration::from_secs(args.get_periodic_sampling_seconds()));
+    let mut interval = time::interval(StdDuration::from_secs(args.get_periodic_sampling_seconds()));
 
+    let mut tick_counter = 0_u32;
     loop {
+        tick_counter = tick_counter.wrapping_add(1);
+
         interval.tick().await;
         match on_tick(&repo, &mut sampler, &mut display_printer) {
             Ok(_) => {}
@@ -38,7 +42,19 @@ async fn main() -> io::Result<()> {
                 log::error!("{:?}", err)
             }
         };
+
+        if is_nth_tick(tick_counter as u64, args.get_remove_measurements_after()) {
+            let remove_measurements_to =
+                Local::now() - Duration::days(args.get_keep_measurements_days() as i64);
+            if let Err(err) = repo.delete_measurements_older_than(remove_measurements_to) {
+                log::error!("Couldn't delete measurements: {err:?}");
+            }
+        }
     }
+}
+
+fn is_nth_tick(tick: u64, n: u64) -> bool {
+    tick % n == 0
 }
 
 /// Execute tasks at the end of each interval

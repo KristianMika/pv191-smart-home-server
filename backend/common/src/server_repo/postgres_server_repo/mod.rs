@@ -1,6 +1,7 @@
 pub mod models;
 pub(crate) mod schema;
 
+use chrono::{DateTime, Local};
 use diesel::dsl::sql;
 use diesel::result::DatabaseErrorKind;
 use diesel::result::Error::DatabaseError;
@@ -137,6 +138,19 @@ impl ServerRepo for PostgresServerRepo {
             .cloned();
 
         Ok(result)
+    }
+
+    fn delete_measurements_older_than(
+        &self,
+        to: DateTime<Local>,
+    ) -> error_stack::Result<usize, DbError> {
+        use schema::measurement::dsl::*;
+
+        diesel::delete(measurement.filter(measurement_time.lt(to)))
+            .execute(&mut self.get_connection()?)
+            .into_report()
+            .change_context(DbError::FetchError)
+            .attach_printable(format!("Couldn't remove measurements older than {to}"))
     }
 }
 

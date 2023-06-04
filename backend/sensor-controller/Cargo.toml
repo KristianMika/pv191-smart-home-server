@@ -9,6 +9,7 @@ description = "The service responsible for reading sensors' data and storing it 
 common = { path = "../common" }
 clap = { version = "4.1", features = ["derive"] }
 clap-num = "1.0"
+chrono = "0.4"
 dotenvy = "0.15"
 embedded-graphics = "0.7"
 env_logger = "0.10"

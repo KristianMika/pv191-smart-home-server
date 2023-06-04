@@ -22,6 +22,14 @@ pub(crate) struct Args {
     /// Measurement period in seconds in range [30, 300]
     #[arg(long, default_value_t = 30, value_parser=measurement_period_seconds_parser)]
     periodic_sampling_seconds: u64,
+
+    /// The number of periods to wait for old measurements removal
+    #[arg(long, default_value_t = 200)]
+    remove_measurements_after: u64,
+
+    /// How many days of measurements to keep
+    #[arg(long, default_value_t = 2)]
+    keep_measurements_days: u32,
 }
 
 fn measurement_period_seconds_parser(period: &str) -> Result<u64, String> {
@@ -47,5 +55,13 @@ impl Args {
 
     pub fn get_periodic_sampling_seconds(&self) -> u64 {
         self.periodic_sampling_seconds
+    }
+
+    pub fn get_remove_measurements_after(&self) -> u64 {
+        self.remove_measurements_after
+    }
+
+    pub fn get_keep_measurements_days(&self) -> u32 {
+        self.keep_measurements_days
     }
 }

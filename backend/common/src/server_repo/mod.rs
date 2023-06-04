@@ -34,6 +34,11 @@ pub trait ServerRepo {
     fn get_user(&self, login: &str) -> error_stack::Result<Option<UserStore>, DbError>;
 
     fn get_user_by_id(&self, id: i32) -> error_stack::Result<Option<UserStore>, DbError>;
+
+    fn delete_measurements_older_than(
+        &self,
+        to: DateTime<Local>,
+    ) -> error_stack::Result<usize, DbError>;
 }
 
 #[derive(Debug)]
