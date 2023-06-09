@@ -70,11 +70,25 @@ impl AirSensorSampler {
         Ok(Sgp40::new(i2c_dev, SGP40_I2C_ADDRESS, Delay))
     }
 
-    fn measure_voc_index(&mut self) -> error_stack::Result<VocIndex, SensorError> {
-        self.sgp40.measure_voc_index().map_err(|err| {
-            error_stack::Report::new(SensorError)
-                .attach_printable(format!("Couldn't perform VOC measurement: {:?}", err))
-        })
+    fn measure_voc_index(
+        &mut self,
+        temperature: Option<f32>,
+        humidity: Option<u32>,
+    ) -> error_stack::Result<VocIndex, SensorError> {
+        if temperature.is_none() || humidity.is_none() {
+            return self.sgp40.measure_voc_index().map_err(|err| {
+                error_stack::Report::new(SensorError)
+                    .attach_printable(format!("Couldn't perform VOC measurement: {:?}", err))
+            });
+        }
+        let temperature_in_mili = (temperature.unwrap() * 1000.0) as i16;
+        let humidity_in_mili = (humidity.unwrap() * 1000) as u16;
+        self.sgp40
+            .measure_voc_index_with_rht(humidity_in_mili, temperature_in_mili)
+            .map_err(|err| {
+                error_stack::Report::new(SensorError)
+                    .attach_printable(format!("Couldn't perform VOC measurement: {:?}", err))
+            })
     }
 }
 
@@ -96,7 +110,7 @@ impl SensorSampler for AirSensorSampler {
 
         // SGP40 may need a few more reads to init the algorithm
         for _ in 0..VOC_INIT_REPETITION_COUNT {
-            match self.measure_voc_index() {
+            match self.measure_voc_index(temperature, humidity) {
                 Ok(sample) => {
                     voc_index = Some(sample);
                     if sample >= SGP_MIN_INITIALIZED_VALUE {
