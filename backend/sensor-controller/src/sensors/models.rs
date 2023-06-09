@@ -14,7 +14,7 @@ pub struct HumidityTemperatureMeasurement {
 impl From<Measurement> for HumidityTemperatureMeasurement {
     fn from(value: Measurement) -> Self {
         Self {
-            humidity: (value.rel_hum_pcm / 1000) as u32,
+            humidity: value.rel_hum_pcm / 1000,
             temperature: (value.temp as f32 / 1000.0),
         }
     }
