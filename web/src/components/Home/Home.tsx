@@ -10,7 +10,7 @@ import { CurrentMeasurementTable } from "./CurrentMeasurements/CurrentMeasuremen
 import { MeasurementTime } from "./CurrentMeasurements/MeasurementTime";
 import { MeasurementHistory } from "./HistoryMeasurements/MeasurementHistory";
 
-const VOC_INDEX_NOTIFICATION_THRESHOLD = 60;
+const VOC_INDEX_NOTIFICATION_THRESHOLD = 150;
 const TEN_MINUTES = 1000 * 60 * 10;
 
 const generateHIghVocNotification = (vocIndex: number) => {
