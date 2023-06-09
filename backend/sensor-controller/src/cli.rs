@@ -15,6 +15,10 @@ pub(crate) struct Args {
     #[arg(long, default_value_t = String::from("/dev/i2c-1"))]
     voc_i2c_dev: String,
 
+    /// I2C device to use for the humidity and temperature sensor
+    #[arg(long, default_value_t = String::from("/dev/i2c-1"))]
+    humidity_temperature_i2c_dev: String,
+
     /// DHT11 pin
     #[arg(long, default_value_t = 25)]
     dht11_pin: u8,
@@ -49,8 +53,8 @@ impl Args {
         &self.voc_i2c_dev
     }
 
-    pub fn get_dht11_pin(&self) -> u8 {
-        self.dht11_pin
+    pub fn get_humidity_temperature_i2c_dev(&self) -> &str {
+        &self.humidity_temperature_i2c_dev
     }
 
     pub fn get_periodic_sampling_seconds(&self) -> u64 {

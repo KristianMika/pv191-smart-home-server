@@ -1,11 +1,10 @@
 use common::server_repo::postgres_server_repo::models::NewMeasurementStore;
 use error_stack::{IntoReport, Report, Result, ResultExt};
-use linux_embedded_hal::I2cdev;
+use hal::{Delay, I2cdev};
+use linux_embedded_hal as hal;
 use log::error;
 use mockall::automock;
-use rppal::gpio::{Gpio, Mode};
-use rppal::hal::Delay;
-use rppal_dht11::Dht11;
+use sensor_temp_humidity_sht40::{I2CAddr, Precision, SHT40Driver, TempUnit};
 use sgp40::Sgp40;
 
 use super::error::SensorError;
@@ -23,18 +22,18 @@ pub trait SensorSampler {
 }
 /// Can execute measurements using connected sensors
 pub struct AirSensorSampler {
-    /// DHT11 sensor for humidity and temperature
-    dht11: Dht11,
+    /// SHT40 sensor for humidity and temperature
+    sht40: SHT40Driver<I2cdev, Delay>,
     /// Sgp40 sensor for VOC index
     sgp40: Sgp40<I2cdev, Delay>,
 }
 
 impl AirSensorSampler {
     /// Creates a new instances of `Self`
-    pub fn new(dht11_pin: u8, voc_i2c_dev: &str) -> Result<Self, SensorError> {
+    pub fn new(voc_i2c_dev: &str, humid_temp_i2c_dev: &str) -> Result<Self, SensorError> {
         let sampler = Self {
-            dht11: Self::init_dht11(dht11_pin).attach_printable("Coudln't init dht11")?,
-            sgp40: Self::init_sgp40(voc_i2c_dev)?,
+            sht40: Self::init_sht40(humid_temp_i2c_dev).attach_printable("Coudln't init dht11")?,
+            sgp40: Self::init_sgp40(voc_i2c_dev).attach_printable("Couldn't init sgp40")?,
         };
         Ok(sampler)
     }
@@ -44,8 +43,8 @@ impl AirSensorSampler {
         &mut self,
     ) -> Result<HumidityTemperatureMeasurement, SensorError> {
         match self
-            .dht11
-            .perform_measurement_with_retries(&mut Delay::new(), 5)
+            .sht40
+            .get_temp_and_rh(Precision::High, TempUnit::MilliDegreesCelsius)
         {
             Ok(m) => Ok(m.into()),
             Err(err) => Err(Report::new(SensorError).attach_printable(format!(
@@ -55,19 +54,12 @@ impl AirSensorSampler {
         }
     }
 
-    /// Initializes a DHT11 sensor
-    fn init_dht11(gpio_pin: u8) -> Result<Dht11, SensorError> {
-        let gpio = Gpio::new()
+    fn init_sht40(i2c_dev_name: &str) -> Result<SHT40Driver<I2cdev, Delay>, SensorError> {
+        let i2c_dev = I2cdev::new(i2c_dev_name)
             .into_report()
             .change_context(SensorError)
-            .attach_printable("Couldn't init gpio")?;
-        let pin = gpio
-            .get(gpio_pin)
-            .into_report()
-            .change_context(SensorError)
-            .attach_printable(format!("Couldn't get pin #{}", gpio_pin))?
-            .into_io(Mode::Output);
-        Ok(Dht11::new(pin))
+            .attach_printable("Couldn't create i2c dev")?;
+        Ok(SHT40Driver::new(i2c_dev, I2CAddr::SHT4x_A, Delay))
     }
 
     fn init_sgp40(device_name: &str) -> Result<Sgp40<I2cdev, Delay>, SensorError> {

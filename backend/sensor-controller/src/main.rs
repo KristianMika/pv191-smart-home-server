@@ -27,7 +27,11 @@ async fn main() -> io::Result<()> {
         env::var(DATABASE_URL_ENV).unwrap_or_else(|_| panic!("{} must be set", DATABASE_URL_ENV));
 
     let repo = PostgresServerRepo::from_url(&db_url).unwrap();
-    let mut sampler = AirSensorSampler::new(args.get_dht11_pin(), args.get_voc_i2c_dev()).unwrap();
+    let mut sampler = AirSensorSampler::new(
+        args.get_voc_i2c_dev(),
+        args.get_humidity_temperature_i2c_dev(),
+    )
+    .unwrap();
     let mut display_printer = Ssd1306Printer::new(args.get_display_i2c_dev()).unwrap();
     let mut interval = time::interval(StdDuration::from_secs(args.get_periodic_sampling_seconds()));
 

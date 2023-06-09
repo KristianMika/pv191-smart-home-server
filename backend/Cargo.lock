@@ -1920,16 +1920,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rppal-dht11"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bdc888e612d14b3512de0664ef6274dc7f6a56fb4da75eab72c3dacfc02a202d"
-dependencies = [
- "embedded-hal 0.2.7",
- "rppal",
-]
-
-[[package]]
 name = "rustc_version"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2011,11 +2001,21 @@ dependencies = [
  "log",
  "mockall",
  "rppal",
- "rppal-dht11",
+ "sensor-temp-humidity-sht40",
  "serde",
  "sgp40",
  "ssd1306",
  "tokio",
+]
+
+[[package]]
+name = "sensor-temp-humidity-sht40"
+version = "0.2.601"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9c1df2204f8c798660486bfa29f2c6fd48b26ec4b27b180c19efed931e17308e"
+dependencies = [
+ "embedded-hal 0.2.7",
+ "sensirion-i2c",
 ]
 
 [[package]]

@@ -1,5 +1,5 @@
 use common::server_repo::postgres_server_repo::models::NewMeasurementStore;
-use rppal_dht11::Measurement;
+use sensor_temp_humidity_sht40::Measurement;
 use serde::Serialize;
 
 /// A temperature and humidity measurement
@@ -14,8 +14,8 @@ pub struct HumidityTemperatureMeasurement {
 impl From<Measurement> for HumidityTemperatureMeasurement {
     fn from(value: Measurement) -> Self {
         Self {
-            humidity: value.humidity as u32 / 10,
-            temperature: value.temperature as f32 / 10.0,
+            humidity: (value.rel_hum_pcm / 1000) as u32,
+            temperature: (value.temp as f32 / 1000.0),
         }
     }
 }
