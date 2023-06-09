@@ -6,6 +6,7 @@ import { isJwtSet } from "../../auth";
 import { IUser } from "../../models/IUser";
 import { Measurement, MeasurementType } from "../../models/measurement";
 import { IMeasurementResponse } from "../../models/measurementResponse";
+import { toOneDecimal } from "../../util";
 import { CurrentMeasurementTable } from "./CurrentMeasurements/CurrentMeasurementTable";
 import { MeasurementTime } from "./CurrentMeasurements/MeasurementTime";
 import { MeasurementHistory } from "./HistoryMeasurements/MeasurementHistory";
@@ -57,8 +58,9 @@ export const Home: React.FC = () => {
 
     const data: IMeasurementResponse = response.data as IMeasurementResponse;
 
+    let roundedTemperature = toOneDecimal(data.temperature);
     const measurements: Measurement[] = [
-      { type: MeasurementType.Temperature, value: data.temperature },
+      { type: MeasurementType.Temperature, value: roundedTemperature },
       { type: MeasurementType.Humidity, value: data.humidity },
       { type: MeasurementType.Voc, value: data.voc_index },
     ];
