@@ -8,21 +8,17 @@ PV191 Smart Home Server is a simple server application that measures temperature
 
 ## Temperature and Humidity
 
-[DHT22](https://pdf1.alldatasheet.com/datasheet-pdf/view/1132459/ETC2/DHT22.html) is a capacitive-type humidity and temperature sensor. It measures relative humidity in the range of 0-100%RH with a precision of +-5% and temperature in the range of -40°C - 80°C with a precision < +-0.5°C.
+[SHT40](https://sensirion.com/media/documents/33FD6951/63E1087C/Datasheet_SHT4x_1.pdf) is a capacitive-type humidity and temperature sensor. It measures the relative humidity in the range of 0 - 100 %RH with a precision of ±1% and temperature in the range of -40 °C - 125 °C with a precision < ±0.1 °C.
 
 ## Volatile Organic Compounds (VOC)
 
-The setup utilizes Adafruit [SGP40 Air Quality Sensor](https://docs.rs-online.com/1956/A700000007055193.pdf). The sensor uses the aforementioned DHT22 sensor to provide data for the computation of compensated VOC index. The index is computed using [Sensirion VOC algorithm](https://github.com/Sensirion/gas-index-algorithm). The algorithm outputs a natural number in the range [0, 500 signalizing indoor air quality. Values below 100 indicate a typical indoor gas composition, while values above 100 indicate deteriorated air quality.
+The setup utilizes Adafruit [SGP40 Air Quality Sensor](https://docs.rs-online.com/1956/A700000007055193.pdf). The sensor uses the aforementioned temperature and humidity sensor to provide data for the computation of compensated VOC index. The index is computed using [Sensirion VOC algorithm](https://github.com/Sensirion/gas-index-algorithm). The algorithm outputs a natural number in the range [0, 500 signalizing indoor air quality. Values below 100 indicate a typical indoor gas composition, while values above 100 indicate deteriorated air quality.
 
 <p align="center">
     <img src="./.github/images/voc_scale.jpeg" alt="VOC scale">
 </p>
 
 ## Installation
-
-### I2C Busses
-
-The server application communicates with the display and VOC index sensor using an I2C interface. Please, follow [this](https://www.instructables.com/Raspberry-PI-Multiple-I2c-Devices/) guide to configure multiple I2C busses on your Raspberry PI.
 
 ### Database
 
