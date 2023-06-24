@@ -45,9 +45,7 @@ async fn main() -> io::Result<()> {
 
     let repo =
         Arc::new(PostgresServerRepo::from_url(&db_url).expect("Couldn't init postgres repo"));
-    let server_state = ServerState::new(repo);
-
-    let server_state = Data::new(server_state);
+    let server_state = Data::new(ServerState::new(repo));
 
     let key_pair = KeyPair::generate();
 
@@ -55,22 +53,20 @@ async fn main() -> io::Result<()> {
     let listening_address = args_cloned.get_listening_address();
     info!("Starting server on address {}.", listening_address);
     HttpServer::new(move || {
+        let token_signer = TokenSigner::new()
+            .access_token_name(ACCESS_TOKEN_COOKIE_NAME)
+            .access_token_lifetime(Duration::minutes(ACCESS_TOKEN_MAX_AGE_MINUTES))
+            .refresh_token_name(REFRESH_TOKEN_COOKIE_NAME)
+            .refresh_token_lifetime(Duration::days(REFRESH_TOKEN_MAX_AGE_DAYS))
+            .signing_key(key_pair.sk.clone())
+            .algorithm(Ed25519)
+            .build();
         let authority = Authority::<UserClaims, Ed25519, _, _>::new()
             .refresh_authorizer(|| async move { Ok(()) })
-            .token_signer(Some(
-                TokenSigner::new()
-                    .access_token_name(ACCESS_TOKEN_COOKIE_NAME)
-                    .access_token_lifetime(Duration::minutes(ACCESS_TOKEN_MAX_AGE_MINUTES))
-                    .refresh_token_name(REFRESH_TOKEN_COOKIE_NAME)
-                    .refresh_token_lifetime(Duration::days(REFRESH_TOKEN_MAX_AGE_DAYS))
-                    .signing_key(key_pair.sk.clone())
-                    .algorithm(Ed25519)
-                    .build()
-                    .expect("Couldn't build TokenSigner"),
-            ))
+            .token_signer(Some(token_signer.expect("Couldn't build TokenSigner")))
             .verifying_key(key_pair.pk)
             .build()
-            .expect("Couldn't build");
+            .expect("Couldn't build authority");
         App::new()
             .app_data(server_state.clone())
             // TODO: for development only
