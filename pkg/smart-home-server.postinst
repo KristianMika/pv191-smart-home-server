@@ -1,0 +1,34 @@
+#!/bin/sh
+
+set -e 
+
+# Disable debconf prompting
+export DEBIAN_FRONTEND=noninteractive
+
+setup_user() {
+    if ! getent passwd "$1" >/dev/null; then
+            adduser --quiet \
+                    --system \
+                    --home /nonexistent \
+                    --no-create-home \
+                    --disabled-password \
+                    --shell /usr/sbin/nologin \
+                    --group \
+                    "$1"
+    fi
+}
+
+setup_user home-server
+
+## smart-home-controller postinst script
+
+# cargo-deb supports only one postinst script (I guess)
+# it would be better to use a separate script for the controller service
+
+setup_user home-controller
+
+# home_controller must be able to access /dev/i2c-x devices that belong to group i2c
+usermod -aG i2c home-controller
+
+
+#DEBHELPER#

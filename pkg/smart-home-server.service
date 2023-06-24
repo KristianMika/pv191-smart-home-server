@@ -9,8 +9,8 @@ Environment="DATABASE_URL=postgres://postgres:mysecretpassword@localhost/pv191"
 Restart=on-failure
 RestartSec=5s
 
-User=nobody
-Group=nogroup
+User=home-server
+Group=home-server
 
 Type=simple
 WorkingDirectory=/var/www/smart-home-server/
