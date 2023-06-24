@@ -34,7 +34,9 @@ impl ServerRepo for PostgresServerRepo {
             .order(measurement_time.desc())
             .limit(1)
             .load::<MeasurementStore>(&mut self.get_connection()?)
-            .unwrap();
+            .into_report()
+            .change_context(DbError::FetchError)
+            .attach_printable(format!("Couldn't fetch the last measurement"))?;
         Ok(result.first().cloned())
     }
 
