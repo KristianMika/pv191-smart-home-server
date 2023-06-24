@@ -44,7 +44,12 @@ export const MeasurementChart: React.FC<IMeasurementChart> = (props) => {
             scale="time"
             tickFormatter={(label: Date) => label.getHours().toString()}
           />
-          <YAxis tickCount={5} />
+          <YAxis
+            tickCount={5}
+            type={"number"}
+            domain={["auto", "auto"]}
+            allowDataOverflow
+          />
           <Line
             type="monotone"
             dataKey={props.measurementKey}
