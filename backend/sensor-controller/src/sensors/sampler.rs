@@ -1,3 +1,7 @@
+use std::cmp::min;
+use std::thread::sleep;
+use std::time::Duration;
+
 use common::server_repo::postgres_server_repo::models::NewMeasurementStore;
 use error_stack::{IntoReport, Report, Result, ResultExt};
 use hal::{Delay, I2cdev};
@@ -11,8 +15,8 @@ use super::error::SensorError;
 use super::models::HumidityTemperatureMeasurement;
 
 const SGP40_I2C_ADDRESS: u8 = 0x59;
-const VOC_INIT_REPETITION_COUNT: usize = 50;
-const SGP_MIN_INITIALIZED_VALUE: u16 = 5;
+const SGP40_MAX_CONSEQUENT_READS: usize = 10;
+static SGP40_INIT_MEASUREMENTS: usize = 50;
 
 type VocIndex = u16;
 
@@ -26,6 +30,8 @@ pub struct AirSensorSampler {
     sht40: SHT40Driver<I2cdev, Delay>,
     /// Sgp40 sensor for VOC index
     sgp40: Sgp40<I2cdev, Delay>,
+    /// remaining Sgp40 init measurements
+    sgp40_measurements_left: usize,
 }
 
 impl AirSensorSampler {
@@ -34,6 +40,7 @@ impl AirSensorSampler {
         let sampler = Self {
             sht40: Self::init_sht40(humid_temp_i2c_dev).attach_printable("Couldn't init dht11")?,
             sgp40: Self::init_sgp40(voc_i2c_dev).attach_printable("Couldn't init sgp40")?,
+            sgp40_measurements_left: SGP40_INIT_MEASUREMENTS,
         };
         Ok(sampler)
     }
@@ -90,6 +97,20 @@ impl AirSensorSampler {
                     .attach_printable(format!("Couldn't perform VOC measurement: {:?}", err))
             })
     }
+
+    fn perform_dummy_sgp40_measurements(
+        &mut self,
+        temperature: Option<f32>,
+        humidity: Option<u32>,
+    ) {
+        for _ in 0..(min(self.sgp40_measurements_left, SGP40_MAX_CONSEQUENT_READS)) {
+            self.sgp40_measurements_left -= 1;
+            if let Err(err) = self.measure_voc_index(temperature, humidity) {
+                error!("{:?}", err);
+            };
+            sleep(Duration::from_secs(1));
+        }
+    }
 }
 
 impl SensorSampler for AirSensorSampler {
@@ -108,18 +129,14 @@ impl SensorSampler for AirSensorSampler {
             }
         };
 
-        // SGP40 may need a few more reads to init the algorithm
-        for _ in 0..VOC_INIT_REPETITION_COUNT {
-            match self.measure_voc_index(temperature, humidity) {
-                Ok(sample) => {
-                    voc_index = Some(sample);
-                    if sample >= SGP_MIN_INITIALIZED_VALUE {
-                        break;
-                    }
-                }
-                Err(err) => error!("{:?}", err),
-            };
-        }
+        self.perform_dummy_sgp40_measurements(temperature, humidity);
+
+        match self.measure_voc_index(temperature, humidity) {
+            Ok(sample) => {
+                voc_index = Some(sample);
+            }
+            Err(err) => error!("{:?}", err),
+        };
 
         Ok(NewMeasurementStore {
             temperature,
