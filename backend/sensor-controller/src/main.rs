@@ -26,13 +26,14 @@ async fn main() -> io::Result<()> {
     let db_url =
         env::var(DATABASE_URL_ENV).unwrap_or_else(|_| panic!("{} must be set", DATABASE_URL_ENV));
 
-    let repo = PostgresServerRepo::from_url(&db_url).unwrap();
+    let repo = PostgresServerRepo::from_url(&db_url).expect("Couldn't init postgres repo");
     let mut sampler = AirSensorSampler::new(
         args.get_voc_i2c_dev(),
         args.get_humidity_temperature_i2c_dev(),
     )
-    .unwrap();
-    let mut display_printer = Ssd1306Printer::new(args.get_display_i2c_dev()).unwrap();
+    .expect("Couldn't init sampler");
+    let mut display_printer =
+        Ssd1306Printer::new(args.get_display_i2c_dev()).expect("Couldn't init display printer");
     let mut interval = time::interval(StdDuration::from_secs(args.get_periodic_sampling_seconds()));
 
     let mut tick_counter = 0_u32;
@@ -81,7 +82,7 @@ fn on_tick(
     display_printer
         .print_measurement(sample.into())
         .change_context(ControllerError)
-        .attach_printable("Coudln't print measurement")?;
+        .attach_printable("Couldn't print measurement")?;
 
     Ok(())
 }

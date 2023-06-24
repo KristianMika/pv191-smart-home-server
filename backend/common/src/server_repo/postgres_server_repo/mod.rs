@@ -167,7 +167,7 @@ impl PostgresServerRepo {
             pg_pool: Arc::new(
                 PostgresServerRepo::init_pool(database_url)
                     .change_context(DbError::InitError)
-                    .attach_printable_lazy(|| "Coudln't initalize pg pool")?,
+                    .attach_printable_lazy(|| "Couldn't initalize pg pool")?,
             ),
         };
         repo.apply_migrations()?;

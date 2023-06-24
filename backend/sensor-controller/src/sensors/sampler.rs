@@ -32,7 +32,7 @@ impl AirSensorSampler {
     /// Creates a new instances of `Self`
     pub fn new(voc_i2c_dev: &str, humid_temp_i2c_dev: &str) -> Result<Self, SensorError> {
         let sampler = Self {
-            sht40: Self::init_sht40(humid_temp_i2c_dev).attach_printable("Coudln't init dht11")?,
+            sht40: Self::init_sht40(humid_temp_i2c_dev).attach_printable("Couldn't init dht11")?,
             sgp40: Self::init_sgp40(voc_i2c_dev).attach_printable("Couldn't init sgp40")?,
         };
         Ok(sampler)

@@ -61,7 +61,7 @@ impl Ssd1306Printer {
         display.clear();
         if let Err(err) = display.flush() {
             return Err(Report::new(DisplayPrinterError)
-                .attach_printable(format!("Coudln't flush display: {:?}", err)));
+                .attach_printable(format!("Couldn't flush display: {:?}", err)));
         };
         Ok(Self {
             display,
