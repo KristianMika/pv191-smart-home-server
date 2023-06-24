@@ -38,7 +38,7 @@ pub(crate) async fn post_register(
 
     let created_user =
         state
-            .repo
+            .get_repo()
             .create_new_user(&request.first_name, &request.login, &hashed_password);
     if let Err(err) = created_user {
         match err.current_context() {

@@ -43,9 +43,9 @@ async fn main() -> io::Result<()> {
     let db_url =
         env::var(DATABASE_URL_ENV).unwrap_or_else(|_| panic!("{} must be set", DATABASE_URL_ENV));
 
-    let server_state = ServerState {
-        repo: Arc::new(PostgresServerRepo::from_url(&db_url).expect("Couldn't init postgres repo")),
-    };
+    let repo =
+        Arc::new(PostgresServerRepo::from_url(&db_url).expect("Couldn't init postgres repo"));
+    let server_state = ServerState::new(repo);
 
     let server_state = Data::new(server_state);
 

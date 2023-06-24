@@ -7,7 +7,7 @@ use crate::{models::MeasurementResponse, state::ServerState};
 /// Sends the currently measured values of all sensors
 #[get("/measurement")]
 pub async fn get_current_measurement(state: web::Data<ServerState>) -> impl Responder {
-    let response: MeasurementResponse = match state.repo.get_last_measurement() {
+    let response: MeasurementResponse = match state.get_repo().get_last_measurement() {
         Err(err) => {
             error!("{:?}", err);
             return HttpResponse::InternalServerError().finish();

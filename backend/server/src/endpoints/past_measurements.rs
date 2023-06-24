@@ -10,7 +10,8 @@ use crate::state::ServerState;
 pub async fn get_past_measurements(state: web::Data<ServerState>) -> impl Responder {
     let one_day_ago = Local::now() - Duration::days(1);
 
-    let response: Vec<MeasurementSelect> = match state.repo.get_measurements_from(one_day_ago) {
+    let response: Vec<MeasurementSelect> = match state.get_repo().get_measurements_from(one_day_ago)
+    {
         Err(err) => {
             error!("{:?}", err);
             return HttpResponse::InternalServerError().finish();
