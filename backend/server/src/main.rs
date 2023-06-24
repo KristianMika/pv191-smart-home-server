@@ -20,7 +20,7 @@ use log::info;
 use std::{env, io, sync::Arc};
 
 use crate::endpoints::auth::{
-    ACCESS_TOKEN_COOKIE_NAME, ACCESS_TOKEN_MAX_AGE_MINUTES, REFRESH_TOKEN_COOKIE_NAME,
+    ACCESS_TOKEN_COOKIE_NAME, ACCESS_TOKEN_MAX_AGE_MINUTES, AUTH_SCOPE, REFRESH_TOKEN_COOKIE_NAME,
     REFRESH_TOKEN_MAX_AGE_DAYS,
 };
 use crate::endpoints::current_measurement::get_current_measurement;
@@ -80,7 +80,7 @@ async fn main() -> io::Result<()> {
             .service(post_logout)
             .use_jwt(
                 authority,
-                web::scope("/api")
+                web::scope(AUTH_SCOPE)
                     .service(get_past_measurements)
                     .service(get_current_measurement)
                     .service(get_user),

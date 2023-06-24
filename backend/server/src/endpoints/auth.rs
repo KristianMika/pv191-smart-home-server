@@ -13,6 +13,7 @@ use crate::models::UserClaims;
 pub(crate) const ACCESS_TOKEN_COOKIE_NAME: &str = "access_token";
 pub(crate) const REFRESH_TOKEN_COOKIE_NAME: &str = "refresh_token";
 pub(crate) const JWT_INDICATOR_COOKIE_NAME: &str = "jwt_set";
+pub(crate) const AUTH_SCOPE: &str = "/api";
 pub(crate) const ACCESS_TOKEN_MAX_AGE_MINUTES: i64 = 90;
 pub(crate) const REFRESH_TOKEN_MAX_AGE_DAYS: i64 = 7;
 
@@ -39,6 +40,8 @@ pub(crate) fn create_auth_response(
     let dummy_jwt_indicator_cookie = create_jwt_indicator_cookie();
     access_cookie.set_http_only(true);
     refresh_cookie.set_http_only(true);
+    access_cookie.set_path(AUTH_SCOPE);
+    refresh_cookie.set_path(AUTH_SCOPE);
 
     Ok(HttpResponse::Ok()
         .cookie(access_cookie)
@@ -55,6 +58,9 @@ pub(crate) fn create_logout_response() -> HttpResponse {
     access_token_removal_cookie.make_removal();
     refresh_token_removal_cookie.make_removal();
     jwt_indicator_cookie.make_removal();
+
+    access_token_removal_cookie.set_path(AUTH_SCOPE);
+    refresh_token_removal_cookie.set_path(AUTH_SCOPE);
 
     HttpResponse::Ok()
         .cookie(access_token_removal_cookie)
