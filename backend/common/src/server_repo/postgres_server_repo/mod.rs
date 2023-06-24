@@ -36,7 +36,7 @@ impl ServerRepo for PostgresServerRepo {
             .load::<MeasurementStore>(&mut self.get_connection()?)
             .into_report()
             .change_context(DbError::FetchError)
-            .attach_printable(format!("Couldn't fetch the last measurement"))?;
+            .attach_printable("Couldn't fetch the last measurement")?;
         Ok(result.first().cloned())
     }
 
