@@ -6,20 +6,11 @@ import { isJwtSet, log_out } from "../../auth";
 import { IUser } from "../../models/IUser";
 import { Measurement, MeasurementType } from "../../models/measurement";
 import { IMeasurementResponse } from "../../models/measurementResponse";
+import { checkVocLevel } from "../../notification";
 import { toOneDecimal } from "../../util";
 import { CurrentMeasurementTable } from "./CurrentMeasurements/CurrentMeasurementTable";
 import { MeasurementTime } from "./CurrentMeasurements/MeasurementTime";
 import { MeasurementHistory } from "./HistoryMeasurements/MeasurementHistory";
-
-const VOC_INDEX_NOTIFICATION_THRESHOLD = 150;
-const TEN_MINUTES = 1000 * 60 * 10;
-
-const generateHIghVocNotification = (vocIndex: number) => {
-  new Notification("High VOC alert", {
-    body: `We have detected VOC of ${vocIndex}!`,
-    icon: "voc-notification-icon.png",
-  });
-};
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -31,19 +22,6 @@ export const Home: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const checkVoc = (vocIndex?: number) => {
-    const lastNotificationTime = parseInt(
-      localStorage.getItem("lastNotificationTime") || ""
-    );
-    if (
-      vocIndex &&
-      vocIndex > VOC_INDEX_NOTIFICATION_THRESHOLD &&
-      (!lastNotificationTime || lastNotificationTime < Date.now() - TEN_MINUTES)
-    ) {
-      localStorage.setItem("lastNotificationTime", Date.now().toString());
-      generateHIghVocNotification(vocIndex);
-    }
-  };
   const [user, setUser] = useState<IUser>({ first_name: "" });
   const [multiMeasurement, setMultiMeasurement] = useState<Measurement[]>([]);
   const [measurementTime, setMeasurementTime] = useState<Date>();
@@ -73,7 +51,7 @@ export const Home: React.FC = () => {
       { type: MeasurementType.Humidity, value: data.humidity },
       { type: MeasurementType.Voc, value: data.voc_index },
     ];
-    checkVoc(data.voc_index);
+    checkVocLevel(data.voc_index);
     setMeasurementTime(new Date(data.measurement_time));
     setMultiMeasurement(measurements);
   };
