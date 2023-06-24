@@ -1,5 +1,5 @@
 use common::server_repo::postgres_server_repo::PostgresServerRepo;
-use std::{error::Error, fmt, sync::Arc};
+use std::sync::Arc;
 
 /// Holds the whole server state
 pub struct ServerState {
@@ -14,15 +14,5 @@ impl ServerState {
 
     pub fn get_repo(&self) -> &Arc<PostgresServerRepo> {
         &self.repo
-    }
-}
-
-#[derive(Debug)]
-pub struct ServerError;
-
-impl Error for ServerError {}
-impl fmt::Display for ServerError {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt.write_str("Server error ocurred")
     }
 }
