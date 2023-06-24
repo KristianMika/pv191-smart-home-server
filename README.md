@@ -39,9 +39,17 @@ curl <tbd>.deb
 sudo apt-get install ./<tbd>.deb
 ```
 
-Now navigate to `http://<ip shown on the display>:8080/`
+### Nginx Reverse Proxy
 
-### Architecture
+To set up a reverse Nginx proxy, follow the official [installation guide](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/) or use the [official Nginx Docker image](https://hub.docker.com/_/nginx). The configuration file is provided in [./nginx.conf](./nginx.conf). Please, note you'll have to generate keys and certificates specified in the configuration file.
+
+Nginx is necessary even if you are not planning on exposing the service to the Internet, as the proxy is used to wrap the traffic in https. Some features, such as notifications, require the https protocol.
+
+### Firewall
+
+In case you are exposing the service to the Internet, consider installing a firewall.
+
+## Architecture
 
 The application consists of 2 services:
 
