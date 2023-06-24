@@ -1,8 +1,8 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse, isAxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { isJwtSet } from "../../auth";
+import { isJwtSet, log_out } from "../../auth";
 import { IUser } from "../../models/IUser";
 import { Measurement, MeasurementType } from "../../models/measurement";
 import { IMeasurementResponse } from "../../models/measurementResponse";
@@ -53,6 +53,15 @@ export const Home: React.FC = () => {
     try {
       response = await axios.get("/api/measurement");
     } catch (e) {
+      if (isAxiosError(e)) {
+        const error: AxiosError = e;
+        if (error?.response?.status === 401) {
+          toast.error("An error has occurred. Please, log in.");
+          log_out();
+          navigate("/login");
+          return;
+        }
+      }
       throw new Error("Couldn't fetch measurements from the server");
     }
 

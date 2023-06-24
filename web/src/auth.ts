@@ -1,3 +1,4 @@
+import axios from "axios";
 import Cookies from "js-cookie";
 
 /**
@@ -12,4 +13,8 @@ import Cookies from "js-cookie";
  */
 export const isJwtSet = (): boolean => {
   return Cookies.get("jwt_set") !== undefined;
+};
+
+export const log_out = () => {
+  axios.post("/logout");
 };
