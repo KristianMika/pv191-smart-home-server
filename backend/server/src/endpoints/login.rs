@@ -15,10 +15,11 @@ use crate::{
 
 #[post("/login")]
 pub(crate) async fn post_login(
-    login_request: web::Json<LoginRequest>,
+    mut login_request: web::Json<LoginRequest>,
     state: web::Data<ServerState>,
     token_signer: web::Data<TokenSigner<UserClaims, Ed25519>>,
 ) -> AuthResult<HttpResponse> {
+    login_request.trim_inputs();
     let user = match state.repo.get_user(&login_request.login) {
         Ok(val) => val,
         Err(err) => {

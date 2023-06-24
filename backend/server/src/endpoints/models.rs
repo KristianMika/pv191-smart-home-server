@@ -15,6 +15,12 @@ impl RegisterRequest {
             && RequestValidator::does_login_meet_requirements(&self.login)
             && RequestValidator::does_password_meet_requirements(&self.password)
     }
+
+    pub fn trim_inputs(&mut self) {
+        self.first_name = self.first_name.trim().into();
+        self.login = self.login.trim().into();
+        self.password = self.password.trim().into();
+    }
 }
 
 #[derive(Deserialize)]
@@ -23,6 +29,12 @@ pub(crate) struct LoginRequest {
     pub password: String,
 }
 
+impl LoginRequest {
+    pub fn trim_inputs(&mut self) {
+        self.login = self.login.trim().into();
+        self.password = self.password.trim().into();
+    }
+}
 #[derive(Serialize)]
 pub(crate) struct Response {
     pub message: String,
@@ -84,5 +96,28 @@ mod test {
             ..get_valid_request()
         };
         assert_eq!(invalid_request.is_valid(), false)
+    }
+
+    #[test]
+    fn given_request_with_spaces_trim_inputs_removes_spaces() {
+        static PASSWORD_WITH_SPACES: &str = "  aw4vrtaa[wi93@sfe ";
+        static TRIMMED_PASSWORD: &str = "aw4vrtaa[wi93@sfe";
+        static FIRST_NAME_WITH_SPACES: &str = "  Edd ";
+        static TRIMMED_FIRST_NAME: &str = "Edd";
+        static LOGIN_WITH_SPACES: &str = "  edd11001     ";
+        static TRIMMED_LOGIN: &str = "edd11001";
+        let mut request = RegisterRequest {
+            first_name: FIRST_NAME_WITH_SPACES.into(),
+            login: LOGIN_WITH_SPACES.into(),
+            password: PASSWORD_WITH_SPACES.into(),
+        };
+
+        request.trim_inputs();
+
+        assert_eq!(request.first_name, TRIMMED_FIRST_NAME);
+        assert_eq!(request.login, TRIMMED_LOGIN);
+        assert_eq!(request.password, TRIMMED_PASSWORD);
+
+        assert!(request.is_valid());
     }
 }

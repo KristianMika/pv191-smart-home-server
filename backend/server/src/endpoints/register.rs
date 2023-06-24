@@ -18,10 +18,11 @@ static BCRYPT_COST: u32 = 10;
 
 #[post("/register")]
 pub(crate) async fn post_register(
-    request: web::Json<RegisterRequest>,
+    mut request: web::Json<RegisterRequest>,
     state: web::Data<ServerState>,
     token_signer: web::Data<TokenSigner<UserClaims, Ed25519>>,
 ) -> AuthResult<HttpResponse> {
+    request.trim_inputs();
     if !request.is_valid() {
         return Ok(HttpResponse::BadRequest().json(Response {
             message: "Invalid request".into(),
