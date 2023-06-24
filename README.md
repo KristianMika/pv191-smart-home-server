@@ -1,5 +1,5 @@
 <div align="center">
-<img src="./.github/images/setup.jpg" style="width: 60%;" alt="Breadboard setup">
+<img src="./.github/images/setup.jpg" alt="Breadboard setup">
 <h1> Smart Home Server</h1>
 
 [![CI](https://github.com/KristianMika/pv191-smart-home-server/actions/workflows/ci.yaml/badge.svg)](https://github.com/KristianMika/pv191-smart-home-server/actions/workflows/ci.yaml)
