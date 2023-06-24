@@ -1,4 +1,6 @@
-use self::postgres_server_repo::models::{MeasurementStore, NewMeasurementStore, UserStore};
+use self::postgres_server_repo::models::{
+    MeasurementSelect, MeasurementStore, NewMeasurementStore, UserStore,
+};
 use chrono::{DateTime, Local};
 use mockall::automock;
 use std::{error::Error, fmt};
@@ -21,7 +23,7 @@ pub trait ServerRepo {
     fn get_measurements_from(
         &self,
         from: DateTime<Local>,
-    ) -> error_stack::Result<Vec<MeasurementStore>, DbError>;
+    ) -> error_stack::Result<Vec<MeasurementSelect>, DbError>;
 
     fn create_new_user(
         &self,

@@ -2,20 +2,19 @@ pub mod models;
 pub(crate) mod schema;
 
 use chrono::{DateTime, Local};
-use diesel::dsl::sql;
 use diesel::result::DatabaseErrorKind;
 use diesel::result::Error::DatabaseError;
-use diesel::sql_types::BigInt;
-use diesel::ExpressionMethods;
+use diesel::sql_types::Timestamptz;
 use diesel::{
     r2d2::{ConnectionManager, Pool, PoolError, PooledConnection},
     PgConnection, QueryDsl, RunQueryDsl,
 };
+use diesel::{sql_query, ExpressionMethods};
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use error_stack::{IntoReport, Report, ResultExt};
 use std::sync::Arc;
 
-use self::models::{NewMeasurementStore, UserStore};
+use self::models::{MeasurementSelect, NewMeasurementStore, UserStore};
 use super::{DbError, ServerRepo};
 use crate::server_repo::postgres_server_repo::models::{MeasurementStore, NewUserStore};
 
@@ -61,24 +60,30 @@ impl ServerRepo for PostgresServerRepo {
     fn get_measurements_from(
         &self,
         datetime_from: chrono::DateTime<chrono::Local>,
-    ) -> error_stack::Result<Vec<MeasurementStore>, DbError> {
-        use schema::measurement::dsl::*;
-
-        let measurements: Vec<MeasurementStore> = measurement
-            .filter(measurement_time.ge(datetime_from))
-            .distinct_on(sql::<BigInt>(
-                "date_trunc('minute', measurement_time) - (extract(minute from measurement_time) % 5) * interval '1 minute'",
-            ))
-            // FIXME pls
-            // we have to order before using `distinct_on` or else we end up with random measurements from every interval 
-            // .order_by(measurement_time.desc()) 
-            .load::<MeasurementStore>(&mut self.get_connection()?)
+    ) -> error_stack::Result<Vec<MeasurementSelect>, DbError> {
+        let raw_query = sql_query(
+            "
+            SELECT interval_start as measurement_time, ROUND(AVG(temperature)::numeric, 2)::float4 as temperature, Round(AVG(humidity))::int4 as humidity, ROUND(AVG(voc_index))::int4 as voc_index
+            FROM (
+                SELECT date_trunc('hour', measurement_time) + (floor(date_part('minute', measurement_time) / 10) * interval '10 minute') AS interval_start,
+                       temperature, humidity, voc_index
+                FROM measurement
+                WHERE measurement_time > $1
+            ) subquery
+            GROUP BY interval_start
+            ORDER BY interval_start;
+            "
+        )
+        .bind::<Timestamptz, _>(datetime_from);
+        let measurements: Vec<MeasurementSelect> = raw_query
+            .load::<MeasurementSelect>(&mut self.get_connection()?)
             .into_report()
             .change_context(DbError::FetchError)
             .attach_printable(format!(
-                "Couldn't fetch measurements from {}",
+                "Couldn't fetch measurements since {}",
                 datetime_from
             ))?;
+
         Ok(measurements)
     }
 
