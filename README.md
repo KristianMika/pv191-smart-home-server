@@ -35,8 +35,8 @@ After the DB server is running, and you've created a database for the applicatio
 The server application is provided as a Debian package. The server runs as a _systemd_ service upon installation.
 
 ```bash
-curl <tbd>.deb
-sudo apt-get install ./<tbd>.deb
+wget https://github.com/KristianMika/pv191-smart-home-server/releases/download/v0.1.0/smart-home-server_0.1.0_arm64.deb
+sudo apt-get install ./smart-home-server_0.1.0_arm64.deb
 ```
 
 ### Nginx Reverse Proxy
