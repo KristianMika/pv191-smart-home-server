@@ -1,4 +1,5 @@
 <div align="center">
+<img src="./.github/images/setup.jpg" style="width: 60%;" alt="Breadboard setup">
 <h1> Smart Home Server</h1>
 
 [![CI](https://github.com/KristianMika/pv191-smart-home-server/actions/workflows/ci.yaml/badge.svg)](https://github.com/KristianMika/pv191-smart-home-server/actions/workflows/ci.yaml)
@@ -17,6 +18,13 @@ The setup utilizes Adafruit [SGP40 Air Quality Sensor](https://docs.rs-online.co
 <p align="center">
     <img src="./.github/images/voc_scale.jpeg" alt="VOC scale">
 </p>
+
+## UI
+
+<div align="center">
+    <img src="./.github/images/ui.png" alt="Web UI">
+    <p> WEB UI after authentication </p>
+</div>
 
 ## Installation
 
@@ -56,6 +64,8 @@ The application consists of 2 services:
 1. The _sensor-controller_ service samples sensors in user-specified intervals and stores measurements in the database
 2. The _server_ service serves the UI page and exposes API that, after the user has authenticated, provides measurements from the DB.
 
-<p align="center">
+<div align="center">
     <img src="./.github/images/arch.png" alt="Application architecture">
-</p>
+    <p> Architecture diagram </p>
+
+</div>
